@@ -63,3 +63,24 @@ This maps:
 
 - client -> http://localhost:4200/
 - server -> http://localhost:3000/
+
+Run the Docker development environment (recommended):
+
+```
+# start (build if needed) in background
+docker compose up -d --build
+
+# show status
+docker compose ps
+
+# tail logs
+docker compose logs -f
+
+# stop and remove containers
+docker compose down
+```
+
+Notes:
+
+- If you have a local dev server running on the same ports (e.g. `ng serve`), stop it first; otherwise Docker will fail to bind the host port.
+- The server exposes a `/health` endpoint used by Docker healthchecks.
