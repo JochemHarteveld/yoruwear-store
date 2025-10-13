@@ -5,6 +5,25 @@
   "scripts": {
     "dev": "npm --prefix client run start & npm --prefix server run dev",
     "build": "npm --prefix client run build",
-    "test": "npm --prefix client run test"
+    "test": "npm --prefix client run test",
+    "lint": "eslint --ext .ts,.js client server || true",
+    "lint:fix": "eslint --fix --ext .ts,.js client server",
+    "format": "prettier --write \"**/*.{ts,js,json,md,css,html}\"",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,ts,json,css,md,html}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^2.8.8",
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.0"
   }
 }
