@@ -1,0 +1,29 @@
+/* Global dark theme and fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
+
+:root {
+	--bg-900: #070912;
+	--bg-800: #0b1220;
+	--surface-700: #0f1724;
+	--muted: #94a3b8;
+	--text: #e6eef8;
+	--accent: #7a6bff;
+}
+
+html, body {
+	height: 100%;
+}
+body {
+	margin: 0;
+	background: linear-gradient(180deg, var(--bg-800), var(--bg-900));
+	color: var(--text);
+	font-family: Arial, Helvetica, sans-serif; /* body text */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Make router outlet/pages use the app background */
+app-root, main, .hero {
+	background: transparent;
+}
+
