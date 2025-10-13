@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "lint": "eslint \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
+    "lint:fix": "eslint --fix \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

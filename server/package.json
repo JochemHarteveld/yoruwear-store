@@ -5,6 +5,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts"
   },
+  "lint": "eslint \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
+  "lint:fix": "eslint --fix \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
   "dependencies": {
     "elysia": "latest"
   },
