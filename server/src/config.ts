@@ -7,6 +7,12 @@ export interface Config {
     origin: string | string[];
   };
   environment: 'development' | 'production';
+  jwt: {
+    accessSecret: string;
+    refreshSecret: string;
+    accessExpiresIn: string;
+    refreshExpiresIn: string;
+  };
 }
 
 export const config: Config = {
@@ -23,5 +29,11 @@ export const config: Config = {
         ]
       : ['http://localhost:4200', 'http://localhost:3000']
   },
-  environment: (process.env.NODE_ENV as 'development' | 'production') || 'development'
+  environment: (process.env.NODE_ENV as 'development' | 'production') || 'development',
+  jwt: {
+    accessSecret: process.env.JWT_ACCESS_SECRET || 'your-super-secret-access-key-change-in-production',
+    refreshSecret: process.env.JWT_REFRESH_SECRET || 'your-super-secret-refresh-key-change-in-production',
+    accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
+    refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d'
+  }
 };

@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import { config } from './config';
+import { AuthUtils } from './utils/auth';
 
 export async function ensureTablesExist() {
   console.log('🗄️ Ensuring database tables exist...');
@@ -29,6 +30,8 @@ export async function ensureTablesExist() {
         \`id\` bigint unsigned NOT NULL AUTO_INCREMENT,
         \`email\` varchar(255) NOT NULL,
         \`name\` varchar(255) NOT NULL,
+        \`password_hash\` varchar(255) NOT NULL,
+        \`refresh_token\` varchar(500),
         \`created_at\` timestamp DEFAULT CURRENT_TIMESTAMP,
         \`updated_at\` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (\`id\`),
@@ -77,6 +80,36 @@ export async function ensureTablesExist() {
     `);
     
     console.log('✅ All tables created successfully');
+    
+    // Add new columns to users table if they don't exist (for existing databases)
+    console.log('🔧 Updating users table schema...');
+    try {
+      // First try to add columns without IF NOT EXISTS (MySQL compatibility)
+      try {
+        await connection.execute(`ALTER TABLE \`users\` ADD COLUMN \`password_hash\` varchar(255)`);
+        console.log('✅ Added password_hash column');
+      } catch (error: any) {
+        if (error.code === 'ER_DUP_FIELDNAME') {
+          console.log('ℹ️ password_hash column already exists');
+        } else {
+          console.log('⚠️ Could not add password_hash column:', error.message);
+        }
+      }
+      
+      try {
+        await connection.execute(`ALTER TABLE \`users\` ADD COLUMN \`refresh_token\` varchar(500)`);
+        console.log('✅ Added refresh_token column');
+      } catch (error: any) {
+        if (error.code === 'ER_DUP_FIELDNAME') {
+          console.log('ℹ️ refresh_token column already exists');
+        } else {
+          console.log('⚠️ Could not add refresh_token column:', error.message);
+        }
+      }
+      
+    } catch (error: any) {
+      console.log('⚠️ Error updating users table:', error.message);
+    }
     
     // Add foreign key constraints (only if they don't exist)
     console.log('🔗 Adding foreign key constraints...');
@@ -129,14 +162,7 @@ export async function ensureTablesExist() {
         ('Shoes', 'Stylish footwear')
       `);
       
-      console.log('👤 Seeding users...');
-      await connection.execute(`
-        INSERT INTO users (email, name) VALUES
-        ('admin@yoruwear.com', 'Admin User'),
-        ('customer@example.com', 'John Doe')
-      `);
-      
-      console.log('👕 Seeding products...');
+      console.log('� Seeding products...');
       await connection.execute(`
         INSERT INTO products (name, description, price, stock, category_id) VALUES
         ('Classic White T-Shirt', 'A comfortable cotton t-shirt perfect for everyday wear', 29.99, 50, 1),
@@ -145,9 +171,58 @@ export async function ensureTablesExist() {
         ('Running Sneakers', 'Comfortable sneakers for your daily run', 79.99, 25, 4)
       `);
       
-      console.log('✅ Seeding completed');
+      console.log('✅ Basic seeding completed');
     } else {
-      console.log(`ℹ️ Database already has ${categoriesCount} categories, skipping seeding`);
+      console.log(`ℹ️ Database already has ${categoriesCount} categories, skipping basic seeding`);
+    }
+    
+    // Handle user seeding/migration separately
+    console.log('👤 Handling users with authentication...');
+    
+    // Check if users exist without passwords and update them
+    const [existingUsersResult] = await connection.execute('SELECT id, email, name, password_hash FROM users WHERE password_hash IS NULL OR password_hash = ""');
+    const existingUsers = existingUsersResult as any[];
+    
+    if (existingUsers.length > 0) {
+      console.log(`🔧 Found ${existingUsers.length} users without passwords, updating...`);
+      
+      for (const user of existingUsers) {
+        let password = 'DefaultPassword123!';
+        if (user.email === 'admin@yoruwear.com') {
+          password = 'Admin123!';
+        } else if (user.email === 'customer@example.com') {
+          password = 'Customer123!';
+        }
+        
+        const passwordHash = await AuthUtils.hashPassword(password);
+        await connection.execute(
+          'UPDATE users SET password_hash = ? WHERE id = ?',
+          [passwordHash, user.id]
+        );
+      }
+      console.log('✅ Updated existing users with password hashes');
+    } else {
+      // Create default users if none exist
+      // Check if there are any users at all
+      const [allUsersResult] = await connection.execute('SELECT COUNT(*) as count FROM users');
+      const allUsersCount = (allUsersResult as any[])[0].count;
+      
+      if (allUsersCount === 0) {
+        console.log('👤 Creating default users...');
+        
+        const adminPasswordHash = await AuthUtils.hashPassword('Admin123!');
+        const customerPasswordHash = await AuthUtils.hashPassword('Customer123!');
+        
+        await connection.execute(`
+          INSERT INTO users (email, name, password_hash) VALUES
+          ('admin@yoruwear.com', 'Admin User', ?),
+          ('customer@example.com', 'John Doe', ?)
+        `, [adminPasswordHash, customerPasswordHash]);
+        
+        console.log('✅ Created default users with authentication');
+      } else {
+        console.log('ℹ️ Users already have authentication configured');
+      }
     }
     
     console.log('✅ Database initialization complete!');
