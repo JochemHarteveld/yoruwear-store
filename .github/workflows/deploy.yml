@@ -146,15 +146,27 @@ jobs:
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
  
-      - name: Deploy to Railway
+      - name: Deploy to Railway  
         working-directory: ./server
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          # Link to project and deploy
-          echo "Linking to Railway project..."
-          railway link --project yoruwear-api --environment production --service yoruwear-api
-          echo "Deploying to Railway..."
+          # Verify token is available
+          if [ -z "${{ secrets.RAILWAY_TOKEN }}" ]; then
+            echo "❌ RAILWAY_TOKEN secret not configured in GitHub!"
+            exit 1
+          fi
+          
+          echo "✅ Railway token configured"
+          
+          # Set up authentication using file-based approach
+          mkdir -p ~/.railway
+          echo '{"token": "${{ secrets.RAILWAY_TOKEN }}"}' > ~/.railway/config.json
+          
+          # Verify authentication
+          echo "🔐 Testing Railway authentication..."
+          railway whoami
+          
+          # Deploy to Railway
+          echo "🚀 Deploying to Railway..."
           railway up --detach
           
       # Alternative deployment methods (commented out)
