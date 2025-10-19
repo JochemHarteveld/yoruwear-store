@@ -4,134 +4,235 @@ Modern e-commerce application built with Angular frontend and Bun backend, featu
 
 ## 🚀 Live Demo
 - **Frontend**: [GitHub Pages](https://jochemharteveld.github.io/yoruwear-store/)
-- **API**: Backend deployment (see deployment guide)
+- **Backend API**: [Railway Production](https://yoruwear-api-production.up.railway.app/)
+- **API Health**: [Health Check](https://yoruwear-api-production.up.railway.app/health)
+- **API Products**: [Products Endpoint](https://yoruwear-api-production.up.railway.app/api/products)
 
 ## 🏗️ Architecture
-- **Frontend**: Angular 20+ with standalone components, dark theme
+- **Frontend**: Angular 20+ with standalone components and dark theme
 - **Backend**: Bun runtime with Elysia framework
-- **Database**: MySQL with Drizzle ORM
-- **Deployment**: GitHub Actions → GitHub Pages + Railway/Render
+- **Database**: Railway MySQL with Drizzle ORM
+- **Deployment**: GitHub Actions → GitHub Pages + Railway
+- **CI/CD**: Automated deployment on push to main branch
 
-Prerequisites
+## 📋 Prerequisites
 
-- Node.js 18+ and npm (for the Angular client)
-- Bun (optional, for the server)
+- **Node.js 20+** and npm (for Angular frontend)
+- **Bun** (for backend development)
+- **Docker** (optional, for containerized development)
 
-Quickstart (developer)
+## 🏃 Quick Start
 
-From the repository root you can use the Makefile or the root npm scripts.
-
-Makefile:
-
-make dev # starts client and server concurrently
-make build # builds the client
-make test # runs client tests
-
-npm scripts:
-
-npm run dev
-npm run build
-npm test
-
-Run services individually
-
-# client
-
-cd client
-npm ci
-npm run start
-
-# server (if you use bun)
-
-cd server
-bun install
-bun run --watch src/index.ts
-
-CI
-
-There is a GitHub Actions workflow at `.github/workflows/ci.yml` that builds the Angular client and installs server dependencies.
-
-Next improvements
-
-- Add ESLint, Prettier and Husky hooks
-- Add server unit tests and a client e2e test
-- Add a VS Code devcontainer
-
-## Docker
-
-You can build and run both services with Docker Compose.
-
-Build and start in the foreground:
-
-```
+### 🐳 Docker Development (Recommended)
+```bash
+# Start both services
 docker compose up --build
-```
 
-This maps:
-
-- client -> http://localhost:4200/
-- server -> http://localhost:3000/
-
-Run the Docker development environment (recommended):
-
-```
-# start (build if needed) in background
+# Run in background
 docker compose up -d --build
 
-# show status
+# Check status
 docker compose ps
 
-# tail logs
+# View logs
 docker compose logs -f
 
-# stop and remove containers
+# Stop services
+docker compose down
+```
+
+### 💻 Local Development
+```bash
+# Install dependencies
+cd client && npm ci
+cd ../server && bun install
+
+# Start frontend (http://localhost:4200)
+cd client && npm run dev
+
+# Start backend (http://localhost:3000)
+cd server && bun run dev
+```
+
+## 🤖 CI/CD Pipeline
+
+**Workflow**: `.github/workflows/deploy.yml`
+- ✅ **Build & Test**: Frontend (Angular) + Backend (Bun)
+- ✅ **Deploy Frontend**: Automatic deployment to GitHub Pages
+- ✅ **Deploy Backend**: Railway deployment ready
+- 🔄 **Triggers**: Push to `main` branch
+
+## ✨ Features
+
+### 🛍️ E-commerce Functionality
+- Product catalog with categories
+- Product details and pricing
+- Stock management
+- User account system
+- Order management
+
+### 🎨 Frontend (Angular)
+- Dark theme UI design
+- Responsive layout
+- TypeScript with standalone components
+- Angular 20+ with modern architecture
+- GitHub Pages deployment
+
+### ⚡ Backend (Bun + Elysia)
+- High-performance Bun runtime
+- Elysia web framework
+- TypeScript throughout
+- RESTful API design
+- CORS configured for production
+
+### 🗄️ Database (MySQL + Drizzle)
+- Type-safe database operations
+- Automated schema migrations
+- Foreign key relationships
+- Seeded with sample data
+- Railway hosting
+
+### 🚀 DevOps
+- Docker containerization
+- GitHub Actions CI/CD
+- Automated testing and deployment
+- Production environment configuration
+
+## 🐳 Docker Development
+
+### Local Development Stack
+```bash
+# Full stack with hot reload
+docker compose up --build
+
+# Services available at:
+# - Frontend: http://localhost:4200/
+# - Backend:  http://localhost:3000/
+# - Health:   http://localhost:3000/health
+```
+
+### Docker Commands
+```bash
+# Background mode
+docker compose up -d --build
+
+# View logs
+docker compose logs -f [service-name]
+
+# Stop services
 docker compose down
 
-## 🚢 Deployment
+# Rebuild specific service
+docker compose up --build [client|server]
+```
 
-### Quick Deploy
-1. **Frontend** → GitHub Pages (automatic)
-2. **Backend** → Railway (recommended)
+## 🔮 Future Improvements
 
+- [ ] Add ESLint, Prettier and Husky hooks
+- [ ] Implement comprehensive test suites (unit + e2e)
+- [ ] Add VS Code devcontainer configuration
+- [ ] Shopping cart functionality
+- [ ] User authentication and authorization
+- [ ] Payment integration
+- [ ] Admin dashboard
+- [ ] Product search and filtering
+
+## 🚢 Production Deployment
+
+### ✅ Current Status
+- **Frontend**: ✅ Deployed to GitHub Pages
+- **Backend**: ✅ Deployed to Railway  
+- **Database**: ✅ MySQL on Railway with full schema
+- **CI/CD**: ✅ Automated deployment pipeline
+
+### 🔗 Production URLs
 ```bash
-# 1. Set up Railway backend
-npm install -g @railway/cli
-railway login
-cd server
-railway up
+# Frontend
+https://jochemharteveld.github.io/yoruwear-store/
 
-# 2. Update frontend API URL
-# Edit client/src/environments/environment.prod.ts
-# Replace 'your-backend-api-url.com' with Railway URL
+# Backend API
+https://yoruwear-api-production.up.railway.app/
 
-# 3. Push to trigger deployment
+# API Endpoints
+GET /health              # Health check
+GET /api/products        # All products
+GET /api/categories      # All categories  
+GET /api/users          # All users
+GET /api/products/:id   # Product by ID
+```
+
+### 🚀 Deploy New Changes
+```bash
+# Automatic deployment on push
+git add .
+git commit -m "Your changes"
 git push origin main
+
+# GitHub Actions will automatically:
+# 1. Build and deploy frontend to GitHub Pages
+# 2. Build and deploy backend to Railway
 ```
 
-### Complete Guide
-📖 **[Full Deployment Guide](./DEPLOYMENT.md)** - Detailed instructions for multiple platforms
+## 🗄️ Database Schema
 
-### Recommended Stack
-- **Frontend**: GitHub Pages (Free)
-- **Backend**: Railway (Free tier)  
-- **Database**: Railway PostgreSQL (Free tier)
-- **Total Cost**: $0/month
+**Platform**: Railway MySQL  
+**ORM**: Drizzle ORM with TypeScript
 
-## 🔧 Environment Variables
+**Tables**:
+- `categories` - Product categories (T-Shirts, Hoodies, etc.)
+- `products` - Product catalog with prices and stock
+- `users` - User accounts
+- `orders` - Customer orders
+- `order_items` - Order line items
 
-### Backend (.env)
+## 🔧 Environment Configuration
+
+### Backend (Railway)
 ```env
-DATABASE_URL=mysql://user:pass@host:port/db
-FRONTEND_URL=https://yourusername.github.io/yoruwear-store  
+DATABASE_URL=mysql://user:pass@mysql.railway.internal:3306/railway
 NODE_ENV=production
-PORT=3000
+PORT=8080
 ```
 
-### Frontend
-Environment files handle API endpoints automatically based on build configuration.
+### Frontend (GitHub Pages)
+- Production API URL configured in `client/src/environments/environment.prod.ts`
+- Build configuration in `client/angular.json` with GitHub Pages settings
 ```
 
-Notes:
+## 🧪 Testing the Application
 
-- If you have a local dev server running on the same ports (e.g. `ng serve`), stop it first; otherwise Docker will fail to bind the host port.
-- The server exposes a `/health` endpoint used by Docker healthchecks.
+### 🔍 Quick Health Checks
+```bash
+# Test production API
+curl https://yoruwear-api-production.up.railway.app/health
+
+# Get products from production
+curl https://yoruwear-api-production.up.railway.app/api/products
+
+# Test local development
+curl http://localhost:3000/health        # Local backend
+curl http://localhost:3000/api/products  # Local products
+```
+
+### 🌐 Frontend Testing
+- **Production**: Visit [https://jochemharteveld.github.io/yoruwear-store/](https://jochemharteveld.github.io/yoruwear-store/)
+- **Local**: Visit [http://localhost:4200/](http://localhost:4200/) after running `docker compose up`
+
+## 📝 Notes
+
+- Stop any local dev servers on ports 3000/4200 before running Docker
+- The server exposes a `/health` endpoint for monitoring
+- GitHub Actions automatically deploys on every push to `main`
+- Database is pre-seeded with sample products and categories
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+---
+
+**Built with ❤️ using Angular, Bun, and modern web technologies**
