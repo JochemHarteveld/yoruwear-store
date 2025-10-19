@@ -31,7 +31,7 @@ RUN bun build \
 	--outdir dist \
 	--minify \
 	--sourcemap=none \
-	src/index.ts
+	src/index-simple.ts
 
 # Expose port (Railway will assign via $PORT)
 EXPOSE 3000
@@ -40,5 +40,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
 	CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
 
-# Use bun runtime for better Railway compatibility
-CMD ["bun", "run", "dist/index.js"]
+# Use bun runtime for better Railway compatibility  
+CMD ["bun", "run", "dist/index-simple.js"]
