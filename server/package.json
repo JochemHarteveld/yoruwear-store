@@ -3,12 +3,20 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "bun run src/seed.ts"
   },
   "lint": "eslint \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
   "lint:fix": "eslint --fix \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
   "dependencies": {
-    "elysia": "latest"
+    "drizzle-kit": "^0.31.5",
+    "drizzle-orm": "^0.44.6",
+    "elysia": "latest",
+    "mysql2": "^3.15.2"
   },
   "devDependencies": {
     "bun-types": "latest"
