@@ -1,0 +1,76 @@
+<div class="products-container">
+  <div class="products-header">
+    <h1>Our Products</h1>
+    <p class="subtitle">Discover our carefully curated collection</p>
+  </div>
+
+  <!-- Category Filter -->
+  <div class="category-filter">
+    <h3>Filter by Category</h3>
+    <div class="filter-buttons">
+      <button 
+        class="filter-btn" 
+        [class.active]="selectedCategory() === null"
+        (click)="filterByCategory(null)">
+        All Products
+      </button>
+      <button 
+        *ngFor="let category of categories()" 
+        class="filter-btn"
+        [class.active]="selectedCategory() === category.id"
+        (click)="filterByCategory(category.id)">
+        {{ category.name }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading">
+    <div class="spinner"></div>
+    <p>Loading products...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error()" class="error">
+    <p>{{ error() }}</p>
+    <button (click)="loadProducts()" class="retry-btn">Try Again</button>
+  </div>
+
+  <!-- Products Grid -->
+  <div *ngIf="!loading() && !error()" class="products-grid">
+    <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <p>No products found in this category.</p>
+    </div>
+    
+    <div *ngFor="let product of filteredProducts" class="product-card">
+      <div class="product-image">
+        <!-- Placeholder for product image -->
+        <div class="image-placeholder">
+          <span class="product-icon">👕</span>
+        </div>
+      </div>
+      
+      <div class="product-info">
+        <div class="product-category">{{ getCategoryName(product.categoryId) }}</div>
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+        
+        <div class="product-footer">
+          <div class="product-price">{{ formatPrice(product.price) }}</div>
+          <div class="product-stock" [class.low-stock]="product.stock < 10">
+            <span *ngIf="product.stock > 0">{{ product.stock }} in stock</span>
+            <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
+          </div>
+        </div>
+        
+        <button 
+          class="add-to-cart-btn" 
+          [disabled]="product.stock === 0"
+          (click)="addToCart(product)">
+          <span *ngIf="product.stock > 0">Add to Cart</span>
+          <span *ngIf="product.stock === 0">Sold Out</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

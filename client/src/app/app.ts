@@ -9,5 +9,5 @@ import { HeaderComponent } from './header/header.component';
   styleUrls: ['./app.css'],
 })
 export class App {
-  protected readonly title = signal('client');
+  protected readonly title = signal('YoruWear Store');
 }

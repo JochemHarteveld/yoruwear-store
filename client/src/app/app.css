@@ -2,12 +2,15 @@
 	box-sizing: border-box;
 }
 
-.hero {
+.app {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	gap: 2rem;
 	color: var(--text);
+}
+
+.hero {
+	flex: 1;
 	padding: 1rem 1.25rem;
 }
 

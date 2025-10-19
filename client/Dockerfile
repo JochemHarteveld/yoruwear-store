@@ -12,6 +12,8 @@ RUN npm ci --no-audit --no-fund
 RUN npm run build -- --configuration production || npm run build
 
 FROM nginx:stable-alpine
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Angular builds to `dist/<projectName>`; this project is named `client` so copy that folder
 ## Angular produces an SSR and a `browser` folder for client assets. Copy browser assets.
 COPY --from=builder /app/dist/client/browser /usr/share/nginx/html

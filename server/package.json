@@ -13,6 +13,7 @@
   "lint": "eslint \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
   "lint:fix": "eslint --fix \"src/**/*.{ts,js}\" --ext .ts --ignore-path ../.eslintignore || true",
   "dependencies": {
+    "@elysiajs/cors": "^1.4.0",
     "drizzle-kit": "^0.31.5",
     "drizzle-orm": "^0.44.6",
     "elysia": "latest",
