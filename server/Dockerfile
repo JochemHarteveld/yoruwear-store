@@ -1,48 +1,44 @@
-# Production Dockerfile using binary compilation
-FROM oven/bun AS build
+# Railway-optimized Dockerfile for YoruWear Store
+# Single-stage build to avoid Registry transfer issues
+FROM oven/bun:1-ubuntu
 
 WORKDIR /app
 
-# Cache packages installation
+# Set environment variables
+ENV NODE_ENV=production
+ENV BUN_ENV=production
+
+# Install system dependencies efficiently
+RUN apt-get update && \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y \
+	curl \
+	ca-certificates && \
+	rm -rf /var/lib/apt/lists/* && \
+	apt-get clean
+
+# Copy package files for dependency caching
 COPY package.json bun.lock* ./
-RUN bun install
+
+# Install dependencies
+RUN bun install --frozen-lockfile --production
 
 # Copy source code
-COPY ./src ./src
+COPY . .
 
-# Set production environment
-ENV NODE_ENV=production
-
-# Build production binary
+# Build for production (non-binary for Railway compatibility)
 RUN bun build \
-	--compile \
-	--minify-whitespace \
-	--minify-syntax \
-	--target bun-linux-x64 \
-	--outfile server \
+	--target bun \
+	--outdir dist \
+	--minify \
+	--sourcemap=none \
 	src/index.ts
 
-# Make binary executable
-RUN chmod +x ./server
-
-# Use Ubuntu slim for easier health checks
-FROM ubuntu:22.04
-
-WORKDIR /app
-
-# Install curl for health checks
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-# Copy the compiled binary
-COPY --from=build /app/server server
-
-# Set production environment
-ENV NODE_ENV=production
-
+# Expose port (Railway will assign via $PORT)
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-	CMD curl -fsS http://127.0.0.1:3000/ || exit 1
+# Health check with Railway port support
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+	CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
 
-CMD ["./server"]
+# Use bun runtime for better Railway compatibility
+CMD ["bun", "run", "dist/index.js"]
