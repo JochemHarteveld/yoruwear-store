@@ -159,25 +159,3 @@ jobs:
           railway up --detach
           
           echo "✅ Railway deployment initiated!"
-          
-      # Alternative deployment methods (commented out)
-      # For Render deployment:
-      # - name: Deploy to Render
-      #   run: |
-      #     curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
-      
-      # For DigitalOcean App Platform:
-      # - name: Deploy to DigitalOcean
-      #   uses: digitalocean/app_action@v1
-      #   with:
-      #     app_name: ${{ secrets.DO_APP_NAME }}
-      #     token: ${{ secrets.DO_TOKEN }}
-      
-      # For Vercel (serverless):
-      # - name: Deploy to Vercel
-      #   uses: amondnet/vercel-action@v25
-      #   with:
-      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-      #     working-directory: ./server
