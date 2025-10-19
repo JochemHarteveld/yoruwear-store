@@ -85,7 +85,7 @@ const app = new Elysia()
   )
   
 
-// Initialize database when the app starts
+// Initialize database and start server
 console.log('🚀 Starting YoruWear API Server...');
 initializeDatabase().then((dbInitialized) => {
   if (!dbInitialized) {
@@ -102,6 +102,14 @@ initializeDatabase().then((dbInitialized) => {
   console.log(`🦊 Elysia app initialized for port ${config.port}`);
   console.log(`📱 Environment: ${config.environment}`);
   console.log(`📋 API Documentation will be available at http://localhost:${config.port}/swagger`);
+  
+  // Start the HTTP server
+  app.listen({
+    port: config.port,
+    hostname: '0.0.0.0'
+  });
+  
+  console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
 }).catch((error) => {
   console.error('❌ Failed to initialize database:', error);
   process.exit(1);
