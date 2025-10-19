@@ -1,6 +1,6 @@
 # Railway-optimized Dockerfile for YoruWear Store
 # Single-stage build to avoid Registry transfer issues
-FROM oven/bun:1-ubuntu
+FROM oven/bun:latest
 
 WORKDIR /app
 
