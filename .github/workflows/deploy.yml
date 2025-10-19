@@ -1,14 +1,15 @@
-name: Deploy to Production
+name: 🚀 Deploy YoruWear Store to Production
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 env:
   NODE_VERSION: '20'
   BUN_VERSION: 'latest'
+  RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
 jobs:
   # Build and test the frontend

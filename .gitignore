@@ -8,3 +8,6 @@ build/
 .idea/
 .env
 .husky/_/
+# Production binaries
+server/server
+server/dist/
