@@ -11,6 +11,6 @@
     "restartPolicyMaxRetries": 10,
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
-    "startCommand": "bun run start"
+    "startCommand": "bun run start:simple"
   }
 }
