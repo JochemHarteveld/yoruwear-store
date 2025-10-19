@@ -148,24 +148,40 @@ jobs:
  
       - name: Deploy to Railway  
         working-directory: ./server
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           # Verify token is available
-          if [ -z "${{ secrets.RAILWAY_TOKEN }}" ]; then
+          if [ -z "$RAILWAY_TOKEN" ]; then
             echo "❌ RAILWAY_TOKEN secret not configured in GitHub!"
             exit 1
           fi
           
           echo "✅ Railway token configured"
           
-          # Set up authentication using file-based approach
-          mkdir -p ~/.railway
-          echo '{"token": "${{ secrets.RAILWAY_TOKEN }}"}' > ~/.railway/config.json
+          # Try multiple authentication methods
+          echo "🔐 Attempting Railway authentication..."
           
-          # Verify authentication
-          echo "🔐 Testing Railway authentication..."
-          railway whoami
+          # Method 1: Environment variable (should work with newer Railway CLI)
+          if railway whoami 2>/dev/null; then
+            echo "✅ Authentication successful via environment variable"
+          else
+            echo "⚠️ Environment auth failed, trying manual config..."
+            
+            # Method 2: Create config directory and file
+            mkdir -p ~/.config/railway
+            echo "{\"token\":\"$RAILWAY_TOKEN\"}" > ~/.config/railway/config.json
+            
+            # Test authentication
+            if railway whoami 2>/dev/null; then
+              echo "✅ Authentication successful via config file"
+            else
+              echo "❌ Authentication failed with token: ${RAILWAY_TOKEN:0:8}..."
+              echo "Please check if your Railway token is valid"
+              exit 1
+            fi
+          fi
           
-          # Deploy to Railway
           echo "🚀 Deploying to Railway..."
           railway up --detach
           
