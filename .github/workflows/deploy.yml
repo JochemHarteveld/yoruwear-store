@@ -140,17 +140,21 @@ jobs:
           name: backend-dist
           path: ./server
 
-      # Railway deployment - Active
-      - name: Install Railway CLI
+      # Railway deployment - CLI approach
+      - name: Install Railway CLI  
         run: |
           curl -fsSL https://railway.app/install.sh | sh
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
-          
+ 
       - name: Deploy to Railway
         working-directory: ./server
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
+          # Link to project and deploy
+          echo "Linking to Railway project..."
+          railway link --project yoruwear-api --environment production --service yoruwear-api
+          echo "Deploying to Railway..."
           railway up --detach
           
       # Alternative deployment methods (commented out)
