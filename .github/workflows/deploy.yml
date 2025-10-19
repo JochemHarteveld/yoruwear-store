@@ -156,6 +156,7 @@ jobs:
           export RAILWAY_TOKEN="${{ secrets.RAILWAY_TOKEN }}"
           
           echo "🚀 Deploying to Railway..."
-          railway up --detach
+          # Deploy to the yoruwear-api service
+          railway up --service=yoruwear-api --detach
           
           echo "✅ Railway deployment initiated!"
