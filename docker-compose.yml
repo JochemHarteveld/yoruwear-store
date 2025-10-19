@@ -33,11 +33,11 @@ services:
     restart: unless-stopped
     healthcheck:
       # give the server a little more time to boot and respond
-      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3000/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3000/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   client:
     build:

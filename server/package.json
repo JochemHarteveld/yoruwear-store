@@ -2,9 +2,9 @@
   "name": "server",
   "version": "1.0.50",
   "scripts": {
-    "start": "bun run src/index.ts",
+    "start": "bun run src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts",
+    "dev": "bun run --watch src/app.ts",
     "build": "echo 'No build step required for Bun'",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

@@ -84,27 +84,28 @@ const app = new Elysia()
       .use(category)  // /api/categories/*
   )
   
-  // Start server after database initialization
-  .listen(config.port, async () => {
-    console.log('🚀 Starting YoruWear API Server...');
-    
-    // Initialize database
-    const dbInitialized = await initializeDatabase();
-    if (!dbInitialized) {
-      console.error('❌ Failed to initialize database. Exiting...');
-      process.exit(1);
-    }
-    
-    // Log CORS configuration
-    const corsOrigins = Array.isArray(config.cors.origin) 
-      ? config.cors.origin 
-      : [config.cors.origin];
-    console.log('CORS origins:', corsOrigins);
-    
-    console.log(`🦊 Elysia is running at 0.0.0.0:${config.port}`);
-    console.log(`📱 Environment: ${config.environment}`);
-    console.log(`📋 API Documentation available at http://localhost:${config.port}/swagger`);
-  });
+
+// Initialize database when the app starts
+console.log('🚀 Starting YoruWear API Server...');
+initializeDatabase().then((dbInitialized) => {
+  if (!dbInitialized) {
+    console.error('❌ Failed to initialize database. Exiting...');
+    process.exit(1);
+  }
+  
+  // Log CORS configuration
+  const corsOrigins = Array.isArray(config.cors.origin) 
+    ? config.cors.origin 
+    : [config.cors.origin];
+  console.log('CORS origins:', corsOrigins);
+  
+  console.log(`🦊 Elysia app initialized for port ${config.port}`);
+  console.log(`📱 Environment: ${config.environment}`);
+  console.log(`📋 API Documentation will be available at http://localhost:${config.port}/swagger`);
+}).catch((error) => {
+  console.error('❌ Failed to initialize database:', error);
+  process.exit(1);
+});
 
 export default app;
 
