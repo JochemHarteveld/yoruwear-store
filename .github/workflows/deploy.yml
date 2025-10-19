@@ -140,65 +140,25 @@ jobs:
           name: backend-dist
           path: ./server
 
-      # Railway deployment - Multiple methods
-      - name: Deploy to Railway (Method 1 - Webhook)
-        if: env.RAILWAY_WEBHOOK_URL != ''
-        env:
-          RAILWAY_WEBHOOK_URL: ${{ secrets.RAILWAY_WEBHOOK_URL }}
+      # Railway deployment using CLI in container
+      - name: Deploy to Railway
         run: |
-          echo "🚀 Deploying via Railway webhook..."
-          curl -X POST "$RAILWAY_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d '{"source": "github-actions"}'
-          echo "✅ Webhook deployment triggered"
-          
-      - name: Deploy to Railway (Method 2 - CLI)
-        if: env.RAILWAY_WEBHOOK_URL == '' && env.RAILWAY_TOKEN != ''
-        working-directory: ./server
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_WEBHOOK_URL: ${{ secrets.RAILWAY_WEBHOOK_URL }}
-        run: |
+          echo "🚀 Setting up Railway deployment..."
           # Install Railway CLI
           curl -fsSL https://railway.app/install.sh | sh
-          echo "$HOME/.railway/bin" >> $GITHUB_PATH
+          export PATH="$PATH:$HOME/.railway/bin"
           
-          echo "🔐 Attempting Railway CLI authentication..."
+          # Change to server directory  
+          cd server
           
-          # Create proper config file
-          mkdir -p ~/.railway
-          cat > ~/.railway/config.json << 'EOF'
-          {
-            "user": {
-              "id": "",
-              "email": "",
-              "name": "",
-              "avatar": "",
-              "flags": []
-            },
-            "token": "$RAILWAY_TOKEN"
-          }
-          EOF
+          echo "🔐 Authenticating with Railway..."
+          # Use project token for authentication
+          export RAILWAY_TOKEN="${{ secrets.RAILWAY_TOKEN }}"
           
-          # Replace token placeholder
-          sed -i "s/\$RAILWAY_TOKEN/$RAILWAY_TOKEN/g" ~/.railway/config.json
+          echo "🚀 Deploying to Railway..."
+          railway up --detach
           
-          # Test and deploy
-          if railway whoami; then
-            echo "✅ CLI Authentication successful"
-            echo "🚀 Deploying to Railway..."
-            railway up --detach
-          else
-            echo "❌ CLI authentication failed"
-            exit 1
-          fi
-          
-      - name: Deployment Status
-        run: |
-          echo "📋 Deployment Summary:"
-          echo "- Webhook URL configured: ${{ env.RAILWAY_WEBHOOK_URL != '' }}"
-          echo "- Railway Token configured: ${{ env.RAILWAY_TOKEN != '' }}"
-          echo "✅ Deployment completed successfully"
+          echo "✅ Railway deployment initiated!"
           
       # Alternative deployment methods (commented out)
       # For Render deployment:
