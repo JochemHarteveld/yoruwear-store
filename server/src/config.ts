@@ -12,7 +12,7 @@ export interface Config {
 export const config: Config = {
   port: Number(process.env.PORT) || 3000,
   database: {
-    url: process.env.MYSQL_DATABASE || process.env.DATABASE_URL || 'mysql://root:password@localhost:3306/yoruwear'
+    url: process.env.DATABASE_URL || process.env.MYSQL_DATABASE || 'mysql://root:password@localhost:3306/yoruwear'
   },
   cors: {
     origin: process.env.NODE_ENV === 'production' 

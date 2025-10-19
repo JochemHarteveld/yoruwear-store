@@ -98,9 +98,7 @@ jobs:
       group: "pages"
       cancel-in-progress: false
     
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+
     
     steps:
       - name: Checkout code

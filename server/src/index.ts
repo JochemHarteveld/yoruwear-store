@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { db } from './db';
 import { products, categories, users } from './db/schema';
 import { config } from './config';
+import { ensureTablesExist } from './ensure-tables';
 
 // Helper function to convert BigInt values to numbers for JSON serialization
 const convertBigIntToNumber = (obj: any): any => {
@@ -23,6 +24,29 @@ const convertBigIntToNumber = (obj: any): any => {
   return obj;
 };
 
+// Initialize database tables on startup
+async function initializeDatabase() {
+  try {
+    console.log('🗄️ Initializing database...');
+    
+    // First ensure tables exist using raw SQL
+    const tablesCreated = await ensureTablesExist();
+    if (!tablesCreated) {
+      console.error('❌ Failed to ensure tables exist');
+      return false;
+    }
+    
+    // Test connection with Drizzle
+    const testResult = await db.select().from(categories).limit(1);
+    console.log('✅ Database connection and tables verified');
+    
+    return true;
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+    return false;
+  }
+}
+
 const app = new Elysia()
   .use(cors({
     origin: config.cors.origin,
@@ -35,7 +59,16 @@ const app = new Elysia()
     return { error: 'Internal server error', details: String(error) };
   })
   .get('/', () => 'Hello Yoruwear Store API')
-  .get('/health', () => ({ status: 'ok' }))
+  .get('/health', async ({ set }) => {
+    try {
+      // Test database connection in health check
+      await db.select().from(categories).limit(1);
+      return { status: 'ok', database: 'connected' };
+    } catch (error) {
+      set.status = 500;
+      return { status: 'error', database: 'disconnected', error: String(error) };
+    }
+  })
   
   // Products endpoints
   .get('/api/products', async ({ set }) => {
@@ -91,6 +124,18 @@ const app = new Elysia()
   // Bind to 0.0.0.0 so the service is reachable from outside the container
   .listen({ port: config.port, hostname: '0.0.0.0' });
 
-console.log(`🦊 Elysia is running at ${app.server?.hostname ?? '0.0.0.0'}:${config.port}`);
-console.log(`Environment: ${config.environment}`);
-console.log(`CORS origins: ${JSON.stringify(config.cors.origin)}`);
+// Initialize database and start server
+async function startServer() {
+  console.log(`Environment: ${config.environment}`);
+  console.log(`CORS origins: ${JSON.stringify(config.cors.origin)}`);
+  
+  // Initialize database
+  const dbInitialized = await initializeDatabase();
+  if (!dbInitialized) {
+    console.error('❌ Failed to initialize database. Server starting anyway...');
+  }
+  
+  console.log(`🦊 Elysia is running at ${app.server?.hostname ?? '0.0.0.0'}:${config.port}`);
+}
+
+startServer().catch(console.error);
