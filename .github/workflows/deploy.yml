@@ -148,8 +148,9 @@ jobs:
           
       - name: Deploy to Railway
         working-directory: ./server
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          railway login --token ${{ secrets.RAILWAY_TOKEN }}
           railway up --detach
           
       # Alternative deployment methods (commented out)
