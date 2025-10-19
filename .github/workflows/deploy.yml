@@ -1,0 +1,178 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+  BUN_VERSION: 'latest'
+
+jobs:
+  # Build and test the frontend
+  frontend-build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        run: |
+          cd client
+          npm ci --no-audit --no-fund
+
+      - name: Lint client code
+        run: |
+          cd client
+          npm run lint
+
+      - name: Build client for GitHub Pages
+        run: |
+          cd client
+          npm run build -- --configuration github-pages
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: client/dist/client/browser/
+          retention-days: 1
+
+  # Build and test the backend
+  backend-build:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install server dependencies
+        run: |
+          cd server
+          bun install --production
+
+      - name: Lint server code  
+        run: |
+          cd server
+          bun run lint
+
+      - name: Upload backend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dist
+          path: server/
+          retention-days: 1
+
+  # Deploy frontend to GitHub Pages
+  deploy-frontend:
+    name: Deploy Frontend to GitHub Pages
+    needs: frontend-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    # Grant GITHUB_TOKEN permissions to deploy to Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    # Allow only one concurrent deployment
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download frontend artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: ./dist
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Deploy backend (placeholder for your chosen platform)
+  deploy-backend:
+    name: Deploy Backend
+    needs: backend-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download backend artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-dist
+          path: ./server
+
+      # Example deployment steps (uncomment and configure based on your choice)
+      
+      # For Railway deployment:
+      # - name: Deploy to Railway
+      #   uses: railway-app/railway-action@v1
+      #   with:
+      #     token: ${{ secrets.RAILWAY_TOKEN }}
+      #     project: ${{ secrets.RAILWAY_PROJECT_ID }}
+      #     service: ${{ secrets.RAILWAY_SERVICE_NAME }}
+      
+      # For Render deployment:
+      # - name: Deploy to Render
+      #   run: |
+      #     curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+      
+      # For DigitalOcean App Platform:
+      # - name: Deploy to DigitalOcean
+      #   uses: digitalocean/app_action@v1
+      #   with:
+      #     app_name: ${{ secrets.DO_APP_NAME }}
+      #     token: ${{ secrets.DO_TOKEN }}
+      
+      # For Vercel (serverless):
+      # - name: Deploy to Vercel
+      #   uses: amondnet/vercel-action@v25
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     working-directory: ./server
+
+      - name: Backend deployment placeholder
+        run: |
+          echo "Backend deployment step - configure based on your chosen platform"
+          echo "See comments above for platform-specific deployment examples"

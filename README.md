@@ -1,8 +1,16 @@
-# Yoruwear Store
+# 👕 Yoruwear Store
 
-Minimal monorepo containing an Angular `client/` and a Bun-based `server/`.
+Modern e-commerce application built with Angular frontend and Bun backend, featuring dark theme UI and automated CI/CD deployment.
 
-This repo includes convenience scripts and CI to improve developer experience.
+## 🚀 Live Demo
+- **Frontend**: [GitHub Pages](https://jochemharteveld.github.io/yoruwear-store/)
+- **API**: Backend deployment (see deployment guide)
+
+## 🏗️ Architecture
+- **Frontend**: Angular 20+ with standalone components, dark theme
+- **Backend**: Bun runtime with Elysia framework
+- **Database**: MySQL with Drizzle ORM
+- **Deployment**: GitHub Actions → GitHub Pages + Railway/Render
 
 Prerequisites
 
@@ -78,6 +86,49 @@ docker compose logs -f
 
 # stop and remove containers
 docker compose down
+
+## 🚢 Deployment
+
+### Quick Deploy
+1. **Frontend** → GitHub Pages (automatic)
+2. **Backend** → Railway (recommended)
+
+```bash
+# 1. Set up Railway backend
+npm install -g @railway/cli
+railway login
+cd server
+railway up
+
+# 2. Update frontend API URL
+# Edit client/src/environments/environment.prod.ts
+# Replace 'your-backend-api-url.com' with Railway URL
+
+# 3. Push to trigger deployment
+git push origin main
+```
+
+### Complete Guide
+📖 **[Full Deployment Guide](./DEPLOYMENT.md)** - Detailed instructions for multiple platforms
+
+### Recommended Stack
+- **Frontend**: GitHub Pages (Free)
+- **Backend**: Railway (Free tier)  
+- **Database**: Railway PostgreSQL (Free tier)
+- **Total Cost**: $0/month
+
+## 🔧 Environment Variables
+
+### Backend (.env)
+```env
+DATABASE_URL=mysql://user:pass@host:port/db
+FRONTEND_URL=https://yourusername.github.io/yoruwear-store  
+NODE_ENV=production
+PORT=3000
+```
+
+### Frontend
+Environment files handle API endpoints automatically based on build configuration.
 ```
 
 Notes:

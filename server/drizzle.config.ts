@@ -5,6 +5,6 @@ export default defineConfig({
   out: './src/db/migrations',
   dialect: 'mysql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'mysql://yoruwear_user:yourpassword@localhost:3306/yoruwear'
+    url: process.env.MYSQL_DATABASE || process.env.DATABASE_URL || 'mysql://yoruwear_user:yourpassword@localhost:3306/yoruwear'
   },
 });

@@ -3,6 +3,7 @@ import { cors } from '@elysiajs/cors';
 import { eq } from 'drizzle-orm';
 import { db } from './db';
 import { products, categories, users } from './db/schema';
+import { config } from './config';
 
 // Helper function to convert BigInt values to numbers for JSON serialization
 const convertBigIntToNumber = (obj: any): any => {
@@ -24,7 +25,7 @@ const convertBigIntToNumber = (obj: any): any => {
 
 const app = new Elysia()
   .use(cors({
-    origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
+    origin: config.cors.origin,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }))
@@ -88,6 +89,8 @@ const app = new Elysia()
   })
   
   // Bind to 0.0.0.0 so the service is reachable from outside the container
-  .listen({ port: 3000, hostname: '0.0.0.0' });
+  .listen({ port: config.port, hostname: '0.0.0.0' });
 
-console.log(`🦊 Elysia is running at ${app.server?.hostname ?? '0.0.0.0'}:${app.server?.port}`);
+console.log(`🦊 Elysia is running at ${app.server?.hostname ?? '0.0.0.0'}:${config.port}`);
+console.log(`Environment: ${config.environment}`);
+console.log(`CORS origins: ${JSON.stringify(config.cors.origin)}`);
