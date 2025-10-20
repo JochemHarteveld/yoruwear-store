@@ -1,172 +1,274 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { OrderService, OrderResponse } from '../../services/order.service';
+
+interface User {
+  id: number;
+  email: string;
+  fullName: string;
+  phone?: string;
+}
+
+interface Address {
+  id: number;
+  fullName: string;
+  streetAddress: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  phone?: string;
+  isDefault: boolean;
+}
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [AsyncPipe, DatePipe],
-  template: `
-    <div class="profile-container">
-      <div class="profile-card">
-        <h1>My Profile</h1>
-        
-        @if (authService.currentUser$ | async; as user) {
-          <div class="user-info">
-            <div class="info-item">
-              <label>Name:</label>
-              <span>{{ user.name }}</span>
-            </div>
-            <div class="info-item">
-              <label>Email:</label>
-              <span>{{ user.email }}</span>
-            </div>
-            @if (user.createdAt) {
-              <div class="info-item">
-                <label>Member since:</label>
-                <span>{{ user.createdAt | date:'longDate' }}</span>
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="loading">Loading profile...</div>
-        }
-        
-        <div class="actions">
-          <button class="btn secondary" (click)="goBack()">
-            ← Back to Home
-          </button>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .profile-container {
-      min-height: 100vh;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 4rem;
-    }
-
-    .profile-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 2rem;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    h1 {
-      color: var(--text-primary, #ffffff);
-      margin: 0 0 2rem 0;
-      font-size: 1.75rem;
-      font-weight: 700;
-    }
-
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .info-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .info-item label {
-      color: var(--text-muted, #94a3b8);
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .info-item span {
-      color: var(--text-primary, #ffffff);
-      font-size: 1.1rem;
-      padding: 0.75rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-muted, #94a3b8);
-      font-style: italic;
-    }
-
-    .actions {
-      display: flex;
-      justify-content: center;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 10px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-      font-size: 0.875rem;
-    }
-
-    .btn.secondary {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-      color: var(--text-primary, #ffffff);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .btn.secondary:hover {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    @media (max-width: 640px) {
-      .profile-container {
-        padding: 1rem;
-        padding-top: 2rem;
-      }
-
-      .profile-card {
-        padding: 1.5rem;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-      }
-    }
-  `]
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  public authService = inject(AuthService);
+  private authService = inject(AuthService);
+  private orderService = inject(OrderService);
   private router = inject(Router);
+  private fb = inject(FormBuilder);
+
+  // State signals
+  activeTab = signal<'personal' | 'address' | 'orders'>('personal');
+  user = signal<User | null>(null);
+  addresses = signal<Address[]>([]);
+  orders = signal<OrderResponse[]>([]);
+  loadingOrders = signal(false);
+
+  // Edit mode signals
+  editingPersonal = signal(false);
+  showAddressForm = signal(false);
+  editingAddressId = signal<number | null>(null);
+
+  // Forms
+  personalForm: FormGroup;
+  addressForm: FormGroup;
+
+  constructor() {
+    this.personalForm = this.fb.group({
+      fullName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['']
+    });
+
+    this.addressForm = this.fb.group({
+      fullName: ['', [Validators.required]],
+      streetAddress: ['', [Validators.required]],
+      city: ['', [Validators.required]],
+      postalCode: ['', [Validators.required]],
+      country: ['', [Validators.required]],
+      phone: [''],
+      isDefault: [false]
+    });
+  }
 
   ngOnInit() {
-    // Ensure user data is loaded
-    this.authService.getCurrentUser().subscribe({
-      error: (error) => {
-        console.error('Failed to load profile:', error);
-        // If user data can't be loaded, redirect to signin
-        this.router.navigate(['/signin']);
+    this.loadUserData();
+    this.loadAddresses();
+  }
+
+  private loadUserData() {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        // Map the user data to our interface
+        const mappedUser: User = {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName || user.name || '',
+          phone: user.phone
+          // dateOfBirth and gender are not in the backend User type yet
+        };
+        this.user.set(mappedUser);
+
+        // Pre-fill personal form
+        this.personalForm.patchValue({
+          fullName: mappedUser.fullName,
+          email: mappedUser.email,
+          phone: mappedUser.phone || ''
+        });
       }
     });
   }
 
-  goBack() {
+  private loadAddresses() {
+    this.authService.currentUser$.subscribe(user => {
+      if (user && user.streetAddress && user.city && user.postalCode && user.country) {
+        const userAddress: Address = {
+          id: 1,
+          fullName: user.fullName || user.name || '',
+          streetAddress: user.streetAddress,
+          city: user.city,
+          postalCode: user.postalCode,
+          country: user.country,
+          phone: user.phone,
+          isDefault: true
+        };
+        this.addresses.set([userAddress]);
+      } else {
+        this.addresses.set([]);
+      }
+    });
+  }
+
+
+
+  private loadOrders() {
+    const user = this.user();
+    if (!user) return;
+
+    this.loadingOrders.set(true);
+    
+    this.orderService.getUserOrders(user.id).subscribe({
+      next: (orders) => {
+        this.orders.set(orders);
+        this.loadingOrders.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading orders:', error);
+        this.orders.set([]);
+        this.loadingOrders.set(false);
+      }
+    });
+  }
+
+  setActiveTab(tab: 'personal' | 'address' | 'orders'): void {
+    this.activeTab.set(tab);
+    
+    // Load orders when orders tab is selected
+    if (tab === 'orders' && this.orders().length === 0) {
+      this.loadOrders();
+    }
+  }
+
+  // Personal info methods
+  startEditingPersonal(): void {
+    this.editingPersonal.set(true);
+  }
+
+  cancelEditingPersonal(): void {
+    this.editingPersonal.set(false);
+    // Reset form to original values
+    const user = this.user();
+    if (user) {
+      this.personalForm.patchValue({
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone || ''
+      });
+    }
+  }
+
+  savePersonalInfo(): void {
+    if (this.personalForm.valid) {
+      const formValue = this.personalForm.value;
+      // TODO: Save to API
+      console.log('Saving personal info:', formValue);
+      
+      // Update local user data
+      const currentUser = this.user();
+      if (currentUser) {
+        this.user.set({
+          ...currentUser,
+          ...formValue
+        });
+      }
+      
+      this.editingPersonal.set(false);
+    }
+  }
+
+  // Address methods
+  addNewAddress(): void {
+    this.editingAddressId.set(null);
+    this.addressForm.reset();
+    this.showAddressForm.set(true);
+  }
+
+  editAddress(address: Address): void {
+    this.editingAddressId.set(address.id);
+    this.addressForm.patchValue({
+      fullName: address.fullName,
+      streetAddress: address.streetAddress,
+      city: address.city,
+      postalCode: address.postalCode,
+      country: address.country,
+      phone: address.phone || '',
+      isDefault: address.isDefault
+    });
+    this.showAddressForm.set(true);
+  }
+
+  cancelAddressForm(): void {
+    this.showAddressForm.set(false);
+    this.editingAddressId.set(null);
+    this.addressForm.reset();
+  }
+
+  saveAddress(): void {
+    if (this.addressForm.valid) {
+      const formValue = this.addressForm.value;
+      const editingId = this.editingAddressId();
+      
+      if (editingId) {
+        // Update existing address
+        const addresses = this.addresses().map(addr => 
+          addr.id === editingId ? { ...addr, ...formValue } : addr
+        );
+        this.addresses.set(addresses);
+      } else {
+        // Add new address
+        const newAddress: Address = {
+          id: Date.now(),
+          ...formValue
+        };
+        this.addresses.set([...this.addresses(), newAddress]);
+      }
+      
+      this.cancelAddressForm();
+    }
+  }
+
+  setDefaultAddress(addressId: number): void {
+    const addresses = this.addresses().map(addr => ({
+      ...addr,
+      isDefault: addr.id === addressId
+    }));
+    this.addresses.set(addresses);
+  }
+
+  deleteAddress(addressId: number): void {
+    if (confirm('Are you sure you want to delete this address?')) {
+      const addresses = this.addresses().filter(addr => addr.id !== addressId);
+      this.addresses.set(addresses);
+    }
+  }
+
+  // Order methods
+  viewOrderDetails(order: OrderResponse): void {
+    // TODO: Navigate to order details page or show modal
+    console.log('View order details:', order);
+  }
+
+  goToShop(): void {
     this.router.navigate(['/']);
   }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+
 }
