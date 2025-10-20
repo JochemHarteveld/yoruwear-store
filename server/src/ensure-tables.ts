@@ -156,22 +156,86 @@ export async function ensureTablesExist() {
       console.log('📝 Seeding categories...');
       await connection.execute(`
         INSERT INTO categories (name, description) VALUES
-        ('T-Shirts', 'Comfortable cotton t-shirts'),
-        ('Hoodies', 'Warm and cozy hoodies'),
-        ('Accessories', 'Various accessories'),
-        ('Shoes', 'Stylish footwear')
+        ('T-Shirts', 'Comfortable cotton t-shirts and graphic tees'),
+        ('Hoodies & Sweatshirts', 'Warm and cozy hoodies and sweatshirts'),
+        ('Accessories', 'Fashion accessories to complete your look'),
+        ('Shoes', 'Stylish footwear for every occasion'),
+        ('Jackets', 'Outerwear for all seasons'),
+        ('Pants & Jeans', 'Comfortable bottoms and denim'),
+        ('Dresses & Skirts', 'Elegant dresses and stylish skirts'),
+        ('Bags', 'Handbags, backpacks, and carry accessories')
       `);
       
-      console.log('� Seeding products...');
+      console.log('🛍️ Seeding products with European pricing...');
       await connection.execute(`
         INSERT INTO products (name, description, price, stock, category_id) VALUES
-        ('Classic White T-Shirt', 'A comfortable cotton t-shirt perfect for everyday wear', 29.99, 50, 1),
-        ('Black Hoodie', 'Warm and cozy hoodie for cold days', 49.99, 30, 2),
-        ('Baseball Cap', 'Stylish cap to complete your outfit', 19.99, 75, 3),
-        ('Running Sneakers', 'Comfortable sneakers for your daily run', 79.99, 25, 4)
+        -- T-Shirts
+        ('Classic White Cotton Tee', 'Premium 100% cotton t-shirt with perfect fit for everyday wear', 24.99, 75, 1),
+        ('Vintage Black Band Tee', 'Retro-style band t-shirt with distressed graphics', 29.99, 45, 1),
+        ('Organic Green Earth Tee', 'Eco-friendly organic cotton t-shirt with nature print', 32.99, 60, 1),
+        ('Striped Navy Breton Shirt', 'Classic French-inspired striped long-sleeve tee', 39.99, 35, 1),
+        ('Minimalist Grey V-Neck', 'Clean, modern v-neck tee perfect for layering', 27.99, 80, 1),
+        ('Graphic Print Sunset Tee', 'Artist-designed sunset graphic on premium cotton', 34.99, 55, 1),
+        
+        -- Hoodies & Sweatshirts  
+        ('Oversized Black Hoodie', 'Ultra-comfortable oversized hoodie with kangaroo pocket', 69.99, 40, 2),
+        ('Vintage Wash Crewneck', 'Retro-style crewneck sweatshirt with vintage wash finish', 59.99, 50, 2),
+        ('Zip-Up Grey Hoodie', 'Premium zip-up hoodie with brushed inner lining', 74.99, 35, 2),
+        ('Cropped Pink Hoodie', 'Trendy cropped hoodie perfect for layering', 64.99, 45, 2),
+        ('University Style Pullover', 'Classic collegiate-style pullover sweatshirt', 54.99, 60, 2),
+        ('Fleece-Lined Winter Hoodie', 'Extra warm fleece-lined hoodie for cold weather', 89.99, 25, 2),
+        
+        -- Accessories
+        ('Leather Baseball Cap', 'Premium leather baseball cap with adjustable strap', 39.99, 90, 3),
+        ('Wool Beanie Hat', 'Cozy merino wool beanie in multiple colors', 24.99, 100, 3),
+        ('Silk Square Scarf', 'Luxurious silk scarf with hand-rolled edges', 79.99, 40, 3),
+        ('Canvas Belt', 'Durable canvas belt with metal buckle', 29.99, 70, 3),
+        ('Leather Wallet', 'Genuine leather bi-fold wallet with RFID protection', 49.99, 55, 3),
+        ('Sunglasses Classic', 'Vintage-inspired sunglasses with UV protection', 89.99, 65, 3),
+        ('Watch Minimalist', 'Clean design watch with leather strap', 149.99, 30, 3),
+        
+        -- Shoes
+        ('White Leather Sneakers', 'Premium white leather sneakers with cushioned sole', 129.99, 45, 4),
+        ('Black Canvas High-Tops', 'Classic high-top canvas sneakers', 79.99, 60, 4),
+        ('Brown Leather Boots', 'Handcrafted leather ankle boots', 189.99, 25, 4),
+        ('Running Sports Shoes', 'Professional running shoes with advanced cushioning', 159.99, 40, 4),
+        ('Slip-On Loafers', 'Comfortable slip-on loafers for casual wear', 99.99, 50, 4),
+        ('Hiking Boots', 'Waterproof hiking boots with excellent grip', 219.99, 20, 4),
+        
+        -- Jackets
+        ('Denim Jacket Classic', 'Timeless denim jacket in premium wash', 89.99, 35, 5),
+        ('Leather Biker Jacket', 'Genuine leather jacket with asymmetric zip', 299.99, 15, 5),
+        ('Puffer Winter Coat', 'Warm puffer jacket with down filling', 179.99, 30, 5),
+        ('Bomber Jacket Green', 'Classic MA-1 style bomber jacket', 124.99, 40, 5),
+        ('Trench Coat Beige', 'Elegant double-breasted trench coat', 249.99, 20, 5),
+        ('Windbreaker Light', 'Lightweight packable windbreaker', 69.99, 55, 5),
+        
+        -- Pants & Jeans
+        ('Slim Fit Blue Jeans', 'Classic slim-fit jeans in dark wash', 79.99, 70, 6),
+        ('Black Skinny Jeans', 'Stretchy skinny jeans for perfect fit', 74.99, 65, 6),
+        ('Chino Pants Khaki', 'Smart-casual chino pants in khaki', 59.99, 80, 6),
+        ('Cargo Pants Olive', 'Utilitarian cargo pants with multiple pockets', 69.99, 50, 6),
+        ('Joggers Comfortable', 'Soft cotton joggers for lounging', 44.99, 90, 6),
+        ('Wide-Leg Trousers', 'Elegant wide-leg trousers for formal occasions', 89.99, 40, 6),
+        
+        -- Dresses & Skirts
+        ('Summer Floral Dress', 'Light and airy floral dress perfect for summer', 79.99, 45, 7),
+        ('Little Black Dress', 'Classic LBD suitable for any occasion', 99.99, 35, 7),
+        ('Midi Wrap Dress', 'Flattering wrap dress in solid colors', 89.99, 50, 7),
+        ('Pleated Mini Skirt', 'Trendy pleated mini skirt in various colors', 49.99, 60, 7),
+        ('Maxi Boho Dress', 'Bohemian-style maxi dress with flowing fabric', 94.99, 30, 7),
+        ('A-Line Denim Skirt', 'Classic A-line denim skirt with button front', 54.99, 55, 7),
+        
+        -- Bags
+        ('Leather Crossbody Bag', 'Compact crossbody bag in genuine leather', 119.99, 40, 8),
+        ('Canvas Backpack', 'Durable canvas backpack for daily use', 69.99, 60, 8),
+        ('Tote Bag Large', 'Spacious tote bag perfect for work or shopping', 79.99, 55, 8),
+        ('Evening Clutch', 'Elegant clutch bag for special occasions', 89.99, 25, 8),
+        ('Weekender Duffel', 'Large duffel bag for weekend trips', 149.99, 30, 8),
+        ('Laptop Messenger Bag', 'Professional messenger bag with laptop compartment', 99.99, 45, 8)
       `);
       
-      console.log('✅ Basic seeding completed');
+      console.log('✅ Complete product catalog seeded with European pricing');
     } else {
       console.log(`ℹ️ Database already has ${categoriesCount} categories, skipping basic seeding`);
     }

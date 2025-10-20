@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Product, Category } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
+import { CurrencyUtils } from '../../utils/currency.utils';
 
 @Component({
   selector: 'app-products',
@@ -70,7 +71,7 @@ export class ProductsComponent implements OnInit {
   }
 
   formatPrice(price: string): string {
-    return `$${parseFloat(price).toFixed(2)}`;
+    return CurrencyUtils.formatPrice(price);
   }
 
   addToCart(product: Product): void {
