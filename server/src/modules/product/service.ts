@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { products } from '../../db/schema';
 
@@ -20,5 +21,26 @@ export abstract class ProductService {
       categoryId: Number(product.categoryId),
       stock: Number(product.stock)
     }));
+  }
+
+  /**
+   * Get product by ID
+   */
+  static async getProductById(id: number) {
+    const productList = await db.select().from(products).where(eq(products.id, id));
+    
+    if (productList.length === 0) {
+      return null;
+    }
+    
+    const product = productList[0];
+    
+    // Convert BigInt to numbers for JSON serialization
+    return {
+      ...product,
+      id: Number(product.id),
+      categoryId: Number(product.categoryId),
+      stock: Number(product.stock)
+    };
   }
 }

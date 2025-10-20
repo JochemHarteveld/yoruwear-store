@@ -51,11 +51,11 @@
       }
       
       @for (product of filteredProducts; track product.id) {
-        <div class="product-card">
+        <div class="product-card" (click)="viewProduct(product.id)">
           <div class="product-image">
             <!-- Placeholder for product image -->
             <div class="image-placeholder">
-              <span class="product-icon">👕</span>
+              <span class="product-icon">{{ getCategoryIcon(product.categoryId) }}</span>
             </div>
           </div>
       
@@ -76,17 +76,9 @@
               </div>
             </div>
             
-            <button 
-              class="add-to-cart-btn" 
-              [disabled]="product.stock === 0"
-              (click)="addToCart(product)">
-              @if (product.stock > 0) {
-                <span>Add to Cart</span>
-              }
-              @if (product.stock === 0) {
-                <span>Sold Out</span>
-              }
-            </button>
+            <div class="view-product-hint">
+              Click to view details →
+            </div>
           </div>
         </div>
       }

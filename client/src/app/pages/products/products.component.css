@@ -144,6 +144,7 @@
   overflow: hidden;
   transition: all var(--transition-normal);
   border: 1px solid var(--border-primary);
+  cursor: pointer;
 }
 
 .product-card:hover {
@@ -261,6 +262,25 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.view-product-hint {
+  text-align: center;
+  padding: var(--space-sm);
+  background: var(--brand-gradient);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: var(--space-md);
+  border-radius: var(--radius-md);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all var(--transition-normal);
+}
+
+.product-card:hover .view-product-hint {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Responsive Design */
