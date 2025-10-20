@@ -65,7 +65,7 @@ const app = new Elysia()
   // Health check endpoint
   .get('/', () => ({
     message: 'YoruWear API is running!',
-    version: '2.0.0',
+    version: '2.0.3',
     environment: config.environment,
     timestamp: new Date().toISOString()
   }), {
