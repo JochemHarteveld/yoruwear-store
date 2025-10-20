@@ -1,3 +1,19 @@
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
 .products-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -174,6 +190,16 @@
   font-size: 3rem;
   opacity: 0.7;
   color: var(--text-tertiary);
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
 }
 
 .product-info {

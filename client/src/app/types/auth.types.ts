@@ -3,6 +3,12 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
+  fullName?: string;
+  phone?: string;
+  streetAddress?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
 }
 
 export interface LoginRequest {
@@ -18,6 +24,13 @@ export interface User {
   id: number;
   email: string;
   name: string;
+  fullName?: string;
+  phone?: string;
+  streetAddress?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  isFirstPurchase?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

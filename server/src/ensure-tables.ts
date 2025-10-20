@@ -58,7 +58,19 @@ export async function ensureTablesExist() {
     await connection.execute(`
       CREATE TABLE IF NOT EXISTS \`orders\` (
         \`id\` bigint unsigned NOT NULL AUTO_INCREMENT,
+        \`order_number\` varchar(50) NOT NULL UNIQUE,
         \`user_id\` bigint unsigned,
+        \`contact_name\` varchar(200) NOT NULL,
+        \`contact_email\` varchar(255) NOT NULL,
+        \`contact_phone\` varchar(20) NOT NULL,
+        \`street_address\` varchar(255) NOT NULL,
+        \`city\` varchar(100) NOT NULL,
+        \`postal_code\` varchar(20) NOT NULL,
+        \`country\` varchar(100) NOT NULL,
+        \`delivery_method\` varchar(50) NOT NULL,
+        \`delivery_cost\` decimal(10,2) NOT NULL DEFAULT '0.00',
+        \`payment_method\` varchar(50) NOT NULL,
+        \`subtotal\` decimal(10,2) NOT NULL,
         \`total\` decimal(10,2) NOT NULL,
         \`status\` varchar(50) NOT NULL DEFAULT 'pending',
         \`created_at\` timestamp DEFAULT CURRENT_TIMESTAMP,
@@ -134,6 +146,40 @@ export async function ensureTablesExist() {
       
     } catch (error: any) {
       console.log('⚠️ Error updating users table:', error.message);
+    }
+
+    // Update orders table schema for existing databases
+    console.log('🔧 Updating orders table schema...');
+    try {
+      const orderFields = [
+        { name: 'order_number', type: 'varchar(50) UNIQUE', description: 'Order number' },
+        { name: 'contact_name', type: 'varchar(200)', description: 'Contact name' },
+        { name: 'contact_email', type: 'varchar(255)', description: 'Contact email' },
+        { name: 'contact_phone', type: 'varchar(20)', description: 'Contact phone' },
+        { name: 'street_address', type: 'varchar(255)', description: 'Street address' },
+        { name: 'city', type: 'varchar(100)', description: 'City' },
+        { name: 'postal_code', type: 'varchar(20)', description: 'Postal code' },
+        { name: 'country', type: 'varchar(100)', description: 'Country' },
+        { name: 'delivery_method', type: 'varchar(50)', description: 'Delivery method' },
+        { name: 'delivery_cost', type: 'decimal(10,2) DEFAULT "0.00"', description: 'Delivery cost' },
+        { name: 'payment_method', type: 'varchar(50)', description: 'Payment method' },
+        { name: 'subtotal', type: 'decimal(10,2)', description: 'Subtotal' }
+      ];
+
+      for (const field of orderFields) {
+        try {
+          await connection.execute(`ALTER TABLE \`orders\` ADD COLUMN \`${field.name}\` ${field.type}`);
+          console.log(`✅ Added ${field.description} column to orders`);
+        } catch (error: any) {
+          if (error.code === 'ER_DUP_FIELDNAME') {
+            console.log(`ℹ️ ${field.description} column already exists in orders`);
+          } else {
+            console.log(`⚠️ Could not add ${field.description} column to orders:`, error.message);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.log('⚠️ Error updating orders table:', error.message);
     }
     
     // Add foreign key constraints (only if they don't exist)

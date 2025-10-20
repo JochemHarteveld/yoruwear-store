@@ -75,15 +75,15 @@ export class ProductsComponent implements OnInit {
 
   getCategoryIcon(categoryId: number): string {
     switch (categoryId) {
-      case 1: return '👕'; // T-Shirts
-      case 2: return '🧥'; // Hoodies & Sweatshirts
-      case 3: return '🎩'; // Accessories
-      case 4: return '👟'; // Shoes
-      case 5: return '🧥'; // Jackets
-      case 6: return '👖'; // Pants & Jeans
-      case 7: return '👗'; // Dresses & Skirts
-      case 8: return '🎒'; // Bags
-      default: return '🛍️'; // Default
+      case 1: return 'checkroom'; // T-Shirts
+      case 2: return 'dry_cleaning'; // Hoodies & Sweatshirts
+      case 3: return 'watch'; // Accessories
+      case 4: return 'footprint'; // Shoes
+      case 5: return 'dry_cleaning'; // Jackets
+      case 6: return 'checkroom'; // Pants & Jeans
+      case 7: return 'checkroom'; // Dresses & Skirts
+      case 8: return 'shopping_bag'; // Bags
+      default: return 'shopping_cart'; // Default
     }
   }
 

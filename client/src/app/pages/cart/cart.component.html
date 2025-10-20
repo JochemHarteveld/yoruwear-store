@@ -1,0 +1,83 @@
+<div class="cart-container">
+  <!-- Stepper Component -->
+  <app-cart-stepper [currentStep]="currentStep()"></app-cart-stepper>
+
+  <!-- Step Content -->
+  <div class="step-content">
+    @switch (currentStep()) {
+      <!-- Step 1: Cart Items -->
+      @case (1) {
+        <app-cart-items 
+          (proceedToCheckout)="proceedToCheckout()"
+          (continueShopping)="continueShopping()">
+        </app-cart-items>
+      }
+      
+      <!-- Step 2: Checkout Form -->
+      @case (2) {
+        <app-checkout-form 
+          [orderForm]="orderForm()"
+          [isProcessing]="isProcessingOrder()"
+          (orderFormChange)="updateOrderForm($event)"
+          (completeOrder)="completeOrder()"
+          (goBack)="goBackToCart()">
+        </app-checkout-form>
+      }
+      
+      <!-- Step 3: Order Confirmation -->
+      @case (3) {
+        <div class="confirmation-container">
+          <div class="confirmation-content">
+            <div class="confirmation-icon">
+              <span class="material-icons">check_circle</span>
+            </div>
+            <h2>Order Confirmed!</h2>
+            <p>Thank you for your order. You will receive a confirmation email shortly.</p>
+            
+            <div class="order-details">
+              <h3>Order Summary</h3>
+              <div class="order-info">
+                @if (orderData()) {
+                  <div class="info-row">
+                    <span>Order Number:</span>
+                    <span>#{{ orderData()?.orderNumber }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span>Subtotal (incl. VAT):</span>
+                    <span>{{ orderData()?.subtotal | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span>Delivery:</span>
+                    <span>{{ orderData()?.deliveryCost | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span>Total:</span>
+                    <span>{{ orderData()?.total | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span>Delivery Method:</span>
+                    <span>{{ getDeliveryMethodName() }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span>Payment Method:</span>
+                    <span>{{ getPaymentMethodName() }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span>Order Date:</span>
+                    <span>{{ orderData()?.createdAt | date:'medium' }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+            
+            <div class="confirmation-actions">
+              <button class="btn primary" (click)="continueShopping()">
+                Continue Shopping
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

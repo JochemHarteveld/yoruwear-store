@@ -1,5 +1,5 @@
-import { Component, signal, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, signal, inject, OnInit } from '@angular/core';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
@@ -10,14 +10,23 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.css']
 })
-export class SigninComponent {
+export class SigninComponent implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
 
   email = signal('');
   password = signal('');
   isLoading = signal(false);
   errorMessage = signal('');
+  returnUrl = signal('');
+
+  ngOnInit() {
+    // Get return URL from query parameters
+    this.route.queryParams.subscribe(params => {
+      this.returnUrl.set(params['returnUrl'] || '/');
+    });
+  }
 
   onSignIn() {
     // Validate form
@@ -44,8 +53,8 @@ export class SigninComponent {
       next: (response) => {
         this.isLoading.set(false);
         console.log('Login successful:', response);
-        // Navigate to home or dashboard
-        this.router.navigate(['/']);
+        // Navigate to return URL or home
+        this.router.navigate([this.returnUrl()]);
       },
       error: (error) => {
         this.isLoading.set(false);

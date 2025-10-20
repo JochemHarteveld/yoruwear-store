@@ -1,0 +1,112 @@
+<div class="order-summary">
+  <div class="summary-header">
+    <h3>Order Summary</h3>
+  </div>
+
+  <div class="summary-content">
+    <!-- Items Summary -->
+    <div class="items-summary">
+      <div class="summary-row">
+        <span>Subtotal (incl. VAT)</span>
+        <span>€{{ subtotal.toFixed(2) }}</span>
+      </div>
+      
+      @if (orderForm.delivery.method) {
+        <div class="summary-row">
+          <span>{{ getDeliveryMethodName() }}</span>
+          <span>€{{ orderForm.delivery.cost.toFixed(2) }}</span>
+        </div>
+      }
+      
+      @if (isFirstTimeBuyer) {
+        <div class="summary-row discount">
+          <span>First-time buyer discount (10%)</span>
+          <span class="discount-amount">-€{{ getDiscountAmount().toFixed(2) }}</span>
+        </div>
+      }
+      
+      <div class="summary-divider"></div>
+      
+      <div class="summary-row total">
+        <span>Total</span>
+        <span>€{{ finalTotal.toFixed(2) }}</span>
+      </div>
+    </div>
+
+    <!-- Selected Options Summary -->
+    <div class="selected-options">
+      @if (orderForm.contact.fullName) {
+        <div class="option-item">
+          <div class="option-icon">
+            <span class="material-icons">person</span>
+          </div>
+          <div class="option-details">
+            <h5>Contact</h5>
+            <p>{{ orderForm.contact.fullName }}</p>
+            <p>{{ orderForm.contact.email }}</p>
+          </div>
+        </div>
+      }
+      
+      @if (orderForm.address.streetAddress) {
+        <div class="option-item">
+          <div class="option-icon">
+            <span class="material-icons">home</span>
+          </div>
+          <div class="option-details">
+            <h5>Delivery Address</h5>
+            <p>{{ orderForm.address.streetAddress }}</p>
+            <p>{{ orderForm.address.city }}, {{ orderForm.address.postalCode }}</p>
+          </div>
+        </div>
+      }
+      
+      @if (orderForm.delivery.method) {
+        <div class="option-item">
+          <div class="option-icon">
+            <span class="material-icons">local_shipping</span>
+          </div>
+          <div class="option-details">
+            <h5>Delivery Method</h5>
+            <p>{{ getDeliveryMethodName() }}</p>
+            <p class="delivery-time">{{ getDeliveryTime() }}</p>
+          </div>
+        </div>
+      }
+      
+      @if (orderForm.payment.method) {
+        <div class="option-item">
+          <div class="option-icon">
+            <span class="material-icons">payment</span>
+          </div>
+          <div class="option-details">
+            <h5>Payment Method</h5>
+            <p>{{ getPaymentMethodName() }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="summary-actions">
+    <button type="button" class="btn secondary" (click)="onGoBack()">
+      <span class="material-icons">arrow_back</span>
+      Back to Cart
+    </button>
+    
+    <button type="button" 
+            class="btn primary" 
+            [class.disabled]="!isFormValid || isProcessing"
+            [disabled]="!isFormValid || isProcessing"
+            (click)="onCompleteOrder()">
+      @if (isProcessing) {
+        <span class="material-icons spinning">hourglass_empty</span>
+        Processing...
+      } @else {
+        <span class="material-icons">lock</span>
+        Complete Order
+      }
+    </button>
+  </div>
+</div>

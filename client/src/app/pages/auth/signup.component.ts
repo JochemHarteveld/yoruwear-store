@@ -1,7 +1,8 @@
-import { Component, signal, inject } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Component, signal, inject, OnInit } from '@angular/core';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-signup',
@@ -10,22 +11,42 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
+  private cartService = inject(CartService);
   
   firstName = signal('');
   lastName = signal('');
+  fullName = signal('');
   email = signal('');
   password = signal('');
   confirmPassword = signal('');
+  phone = signal('');
+  streetAddress = signal('');
+  city = signal('');
+  postalCode = signal('');
+  country = signal('Netherlands');
   loading = signal(false);
   error = signal<string | null>(null);
+  returnUrl = signal('');
+  returnStep = signal('');
 
-  onSignUp() {
-    // Validation
-    if (!this.firstName() || !this.lastName() || !this.email() || !this.password() || !this.confirmPassword()) {
-      this.error.set('Please fill in all fields');
+  ngOnInit() {
+    // Get return URL and step from query parameters
+    this.route.queryParams.subscribe(params => {
+      this.returnUrl.set(params['returnUrl'] || '/');
+      this.returnStep.set(params['step'] || '');
+    });
+  }
+
+  onSubmit() {
+    // Basic validation (alternative: use fullName OR first/last name)
+    const hasName = this.fullName() || (this.firstName() && this.lastName());
+    if (!hasName || !this.email() || !this.password() || !this.confirmPassword() || 
+        !this.phone() || !this.streetAddress() || !this.city() || !this.postalCode() || !this.country()) {
+      this.error.set('Please fill in all required fields');
       return;
     }
 
@@ -56,20 +77,41 @@ export class SignupComponent {
     this.loading.set(true);
     this.error.set(null);
 
-    // Combine first and last name
-    const fullName = `${this.firstName()} ${this.lastName()}`;
+    // Combine first and last name or use fullName directly
+    const displayName = this.fullName() || `${this.firstName()} ${this.lastName()}`;
 
     // Call authentication service
     this.authService.register({
-      name: fullName,
+      name: displayName,
       email: this.email(),
-      password: this.password()
+      password: this.password(),
+      fullName: this.fullName() || displayName,
+      phone: this.phone(),
+      streetAddress: this.streetAddress(),
+      city: this.city(),
+      postalCode: this.postalCode(),
+      country: this.country()
     }).subscribe({
       next: (response) => {
         this.loading.set(false);
         console.log('Registration successful:', response);
-        // Navigate to home or dashboard (user is automatically logged in)
-        this.router.navigate(['/']);
+        
+        // Apply first-time buyer discount
+        this.cartService.setFirstTimeBuyerDiscount(true);
+        
+        // Navigate to return URL or home
+        const url = this.returnUrl();
+        if (url === '/cart' && this.returnStep() === '2') {
+          // Return to cart checkout step
+          this.router.navigate([url]).then(() => {
+            // Set step back to 2 after navigation
+            window.setTimeout(() => {
+              // This would need to be handled by the cart component
+            }, 100);
+          });
+        } else {
+          this.router.navigate([url]);
+        }
       },
       error: (error) => {
         this.loading.set(false);
@@ -91,6 +133,12 @@ export class SignupComponent {
     this.clearErrorOnInput();
   }
 
+  updateFullName(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.fullName.set(target.value);
+    this.clearErrorOnInput();
+  }
+
   updateEmail(event: Event) {
     const target = event.target as HTMLInputElement;
     this.email.set(target.value);
@@ -106,6 +154,36 @@ export class SignupComponent {
   updateConfirmPassword(event: Event) {
     const target = event.target as HTMLInputElement;
     this.confirmPassword.set(target.value);
+    this.clearErrorOnInput();
+  }
+
+  updatePhone(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.phone.set(target.value);
+    this.clearErrorOnInput();
+  }
+
+  updateStreetAddress(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.streetAddress.set(target.value);
+    this.clearErrorOnInput();
+  }
+
+  updateCity(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.city.set(target.value);
+    this.clearErrorOnInput();
+  }
+
+  updatePostalCode(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.postalCode.set(target.value);
+    this.clearErrorOnInput();
+  }
+
+  updateCountry(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    this.country.set(target.value);
     this.clearErrorOnInput();
   }
 

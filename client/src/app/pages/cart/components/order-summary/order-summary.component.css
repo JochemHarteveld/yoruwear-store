@@ -1,0 +1,221 @@
+.order-summary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+  overflow: hidden;
+}
+
+.summary-header {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.summary-header h3 {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  padding-bottom: 1rem;
+}
+
+.summary-content {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+/* Items Summary */
+.items-summary {
+  margin-bottom: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+}
+
+.summary-row.discount {
+  color: #4caf50;
+}
+
+.summary-row.discount .discount-amount {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.summary-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 1rem 0;
+}
+
+.summary-row.total {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 0.5rem;
+}
+
+/* Selected Options */
+.selected-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.option-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.option-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.option-icon .material-icons {
+  color: #6366f1;
+  font-size: 1.1rem;
+}
+
+.option-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.option-details h5 {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.option-details p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.option-details .delivery-time {
+  color: #10b981;
+  font-weight: 500;
+}
+
+/* Action Buttons */
+.summary-actions {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.btn.primary:hover:not(.disabled) {
+  background: linear-gradient(135deg, #5b21b6, #7c3aed);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+}
+
+.btn.primary.disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
+}
+
+.btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn .material-icons {
+  font-size: 1rem;
+}
+
+.btn .material-icons.spinning {
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .order-summary {
+    position: static;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .order-summary {
+    border-radius: 12px;
+  }
+  
+  .summary-header,
+  .summary-content,
+  .summary-actions {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .summary-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .btn {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+}

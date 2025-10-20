@@ -1,0 +1,107 @@
+@if (cartService.items().length === 0) {
+  <div class="empty-cart">
+    <div class="empty-icon material-icons">shopping_cart</div>
+    <h2>Your cart is empty</h2>
+    <p>Add some products to get started!</p>
+    <a href="/products" class="btn primary">Browse Products</a>
+  </div>
+} @else {
+  <div class="cart-content">
+    <!-- Cart Items -->
+    <div class="cart-items">
+      <h2>Shopping Cart ({{ cartService.itemCount() }} items)</h2>
+      
+      @for (item of cartService.items(); track item.id) {
+        <div class="cart-item">
+          <div class="item-image">
+            <div class="placeholder-icon material-icons">{{ getCategoryIcon(item.categoryId) }}</div>
+          </div>
+          <div class="item-details">
+            <h3>{{ item.name }}</h3>
+            <p class="item-size">Size: {{ item.size }}</p>
+            <p class="item-price">{{ item.price | currency:'EUR':'symbol':'1.2-2' }}</p>
+          </div>
+          <div class="item-quantity">
+            <button class="qty-btn" (click)="updateQuantity(item.id, item.quantity - 1)">
+              <span class="material-icons">remove</span>
+            </button>
+            <span class="qty">{{ item.quantity }}</span>
+            <button class="qty-btn" (click)="updateQuantity(item.id, item.quantity + 1)" 
+                    [disabled]="item.quantity >= item.maxStock">
+              <span class="material-icons">add</span>
+            </button>
+          </div>
+          <div class="item-total">
+            {{ (item.price * item.quantity) | currency:'EUR':'symbol':'1.2-2' }}
+          </div>
+          <button class="remove-btn" (click)="removeItem(item.id)">
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+      <h3>Order Summary</h3>
+      
+      <div class="summary-line">
+        <span>Subtotal (incl. VAT)</span>
+        <span>{{ cartService.summary().subtotal | currency:'EUR':'symbol':'1.2-2' }}</span>
+      </div>
+      
+      <div class="summary-line vat-info">
+        <span>VAT ({{ cartService.summary().vatPercentage }}% included)</span>
+        <span>{{ cartService.summary().vat | currency:'EUR':'symbol':'1.2-2' }}</span>
+      </div>
+      
+      @if (cartService.summary().discount > 0) {
+        <div class="summary-line discount">
+          <span>
+            @if (cartService['firstTimeBuyerDiscount']()) {
+              First-time buyer discount (10%)
+            } @else if (cartService.summary().couponCode) {
+              Discount ({{ cartService.summary().couponCode }})
+            } @else {
+              Discount
+            }
+          </span>
+          <span>-{{ cartService.summary().discount | currency:'EUR':'symbol':'1.2-2' }}</span>
+        </div>
+      }
+
+      <!-- Coupon Section -->
+      <div class="coupon-section">
+        @if (!cartService.summary().couponCode) {
+          <div class="coupon-input">
+            <input type="text" 
+                   placeholder="Enter coupon code" 
+                   #couponField>
+            <button class="btn secondary" (click)="applyCoupon(couponField.value)">
+              Apply
+            </button>
+          </div>
+        } @else {
+          <div class="coupon-applied">
+            <span class="material-icons">local_offer</span>
+            <span>{{ cartService.summary().couponCode }} applied</span>
+            <button class="remove-coupon" (click)="removeCoupon()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="summary-line total">
+        <span>Total</span>
+        <span>{{ cartService.summary().total | currency:'EUR':'symbol':'1.2-2' }}</span>
+      </div>
+
+      <button class="btn primary checkout-btn" 
+              (click)="onProceedToCheckout()" 
+              [disabled]="cartService.items().length === 0">
+        Proceed to Checkout
+      </button>
+    </div>
+  </div>
+}

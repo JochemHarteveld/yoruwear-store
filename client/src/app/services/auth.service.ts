@@ -100,6 +100,20 @@ export class AuthService {
   }
 
   /**
+   * Update user profile
+   */
+  updateProfile(profileData: Partial<User>): Observable<UserInfoResponse> {
+    return this.http.put<UserInfoResponse>(`${this.apiUrl}/profile`, profileData, {
+      headers: this.getAuthHeaders()
+    }).pipe(
+      tap(response => {
+        this.currentUserSubject.next(response.user);
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  /**
    * Logout user
    */
   logout(): Observable<MessageResponse> {

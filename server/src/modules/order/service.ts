@@ -1,5 +1,5 @@
 import { db } from '../../db/index.js';
-import { orders, orderItems } from '../../db/schema.js';
+import { orders, orderItems, products } from '../../db/schema.js';
 import { CreateOrderRequest, OrderResponse } from './model.js';
 import { eq } from 'drizzle-orm';
 
@@ -96,15 +96,17 @@ export class OrderService {
         return null;
       }
 
-      // Get order items
+      // Get order items with product names
       const items = await db
         .select({
           id: orderItems.id,
           quantity: orderItems.quantity,
           price: orderItems.price,
-          productId: orderItems.productId
+          productId: orderItems.productId,
+          productName: products.name
         })
         .from(orderItems)
+        .leftJoin(products, eq(orderItems.productId, products.id))
         .where(eq(orderItems.orderId, BigInt(order.id)));
 
       return {
@@ -135,7 +137,7 @@ export class OrderService {
         },
         items: items.map(item => ({
           id: Number(item.productId),
-          name: '', // Would need to join with products table for full data
+          name: item.productName || `Product #${item.productId}`,
           price: Number(item.price),
           quantity: item.quantity
         }))
@@ -143,6 +145,71 @@ export class OrderService {
     } catch (error) {
       console.error('Error fetching order:', error);
       throw new Error('Failed to fetch order');
+    }
+  }
+
+  async getUserOrders(userId: number): Promise<OrderResponse[]> {
+    try {
+      const userOrders = await db
+        .select()
+        .from(orders)
+        .where(eq(orders.userId, BigInt(userId)));
+
+      const ordersWithItems = await Promise.all(
+        userOrders.map(async (order) => {
+          // Get order items with product names
+          const items = await db
+            .select({
+              id: orderItems.id,
+              quantity: orderItems.quantity,
+              price: orderItems.price,
+              productId: orderItems.productId,
+              productName: products.name
+            })
+            .from(orderItems)
+            .leftJoin(products, eq(orderItems.productId, products.id))
+            .where(eq(orderItems.orderId, BigInt(order.id)));
+
+          return {
+            id: Number(order.id),
+            orderNumber: order.orderNumber,
+            status: order.status,
+            total: Number(order.total),
+            subtotal: Number(order.subtotal),
+            deliveryCost: Number(order.deliveryCost),
+            createdAt: order.createdAt!.toISOString(),
+            contact: {
+              fullName: order.contactName,
+              email: order.contactEmail,
+              phone: order.contactPhone
+            },
+            address: {
+              streetAddress: order.streetAddress,
+              city: order.city,
+              postalCode: order.postalCode,
+              country: order.country
+            },
+            delivery: {
+              method: order.deliveryMethod,
+              cost: Number(order.deliveryCost)
+            },
+            payment: {
+              method: order.paymentMethod
+            },
+            items: items.map(item => ({
+              id: Number(item.productId),
+              name: item.productName || `Product #${item.productId}`,
+              price: Number(item.price),
+              quantity: item.quantity
+            }))
+          };
+        })
+      );
+
+      return ordersWithItems;
+    } catch (error) {
+      console.error('Error fetching user orders:', error);
+      throw new Error('Failed to fetch user orders');
     }
   }
 }

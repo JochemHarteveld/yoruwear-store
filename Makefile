@@ -43,6 +43,11 @@ test:
 	@echo "Running client tests..."
 	cd client && npm test
 
+# Open Drizzle Studio (database browser)
+studio:
+	@echo "Starting Drizzle Studio..."
+	cd server && bunx drizzle-kit studio
+
 # Stop all services
 stop:
 	@echo "Stopping all Docker services..."

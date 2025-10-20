@@ -1,6 +1,7 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
 import { CurrencyUtils } from '../../utils/currency.utils';
 import { CommonModule } from '@angular/common';
@@ -18,7 +19,7 @@ import { CommonModule } from '@angular/common';
         </div>
       } @else if (error()) {
         <div class="error-state">
-          <div class="error-icon">⚠️</div>
+          <div class="error-icon material-icons">warning</div>
           <h2>Product Not Found</h2>
           <p>{{ error() }}</p>
           <button class="btn secondary" (click)="goBack()">← Back to Products</button>
@@ -34,7 +35,7 @@ import { CommonModule } from '@angular/common';
             <!-- Product Image -->
             <div class="product-image">
               <div class="image-placeholder">
-                <div class="placeholder-icon">{{ getCategoryIcon(prod.categoryId) }}</div>
+                <div class="placeholder-icon material-icons">{{ getCategoryIcon(prod.categoryId) }}</div>
                 <span class="placeholder-text">Product Image</span>
               </div>
             </div>
@@ -72,9 +73,15 @@ import { CommonModule } from '@angular/common';
               <!-- Stock Info -->
               <div class="stock-info">
                 @if (prod.stock > 0) {
-                  <span class="in-stock">✅ In Stock ({{ prod.stock }} available)</span>
+                  <span class="in-stock">
+                    <span class="material-icons">check_circle</span>
+                    In Stock ({{ prod.stock }} available)
+                  </span>
                 } @else {
-                  <span class="out-of-stock">❌ Out of Stock</span>
+                  <span class="out-of-stock">
+                    <span class="material-icons">cancel</span>
+                    Out of Stock
+                  </span>
                 }
               </div>
 
@@ -87,14 +94,14 @@ import { CommonModule } from '@angular/common';
                       class="qty-btn" 
                       (click)="decreaseQuantity()"
                       [disabled]="quantity() <= 1">
-                      -
+                      <span class="material-icons">remove</span>
                     </button>
                     <span class="quantity">{{ quantity() }}</span>
                     <button 
                       class="qty-btn" 
                       (click)="increaseQuantity()"
                       [disabled]="quantity() >= prod.stock">
-                      +
+                      <span class="material-icons">add</span>
                     </button>
                   </div>
                 </div>
@@ -107,14 +114,16 @@ import { CommonModule } from '@angular/common';
                     <span class="spinner small"></span>
                     Adding...
                   } @else {
-                    🛒 Add to Cart
+                    <span class="material-icons">shopping_cart</span>
+                    Add to Cart
                   }
                 </button>
               </div>
 
               @if (addedToCart()) {
                 <div class="success-message">
-                  ✅ Added to cart successfully!
+                  <span class="material-icons">check_circle</span>
+                  Added to cart successfully!
                 </div>
               }
             </div>
@@ -306,11 +315,17 @@ import { CommonModule } from '@angular/common';
     .in-stock {
       color: #10b981;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .out-of-stock {
       color: #ef4444;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .add-to-cart-section {
@@ -353,6 +368,10 @@ import { CommonModule } from '@angular/common';
       font-weight: 600;
     }
 
+    .qty-btn .material-icons {
+      font-size: 1rem;
+    }
+
     .qty-btn:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.2);
     }
@@ -381,6 +400,7 @@ import { CommonModule } from '@angular/common';
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 0.5rem;
     }
 
     .add-to-cart-btn:hover:not(:disabled) {
@@ -402,6 +422,10 @@ import { CommonModule } from '@angular/common';
       color: #10b981;
       font-weight: 600;
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
 
     .btn {
@@ -456,6 +480,7 @@ export class ProductDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
+  private cartService = inject(CartService);
 
   // State signals
   product = signal<Product | null>(null);
@@ -502,15 +527,15 @@ export class ProductDetailComponent implements OnInit {
 
   getCategoryIcon(categoryId: number): string {
     switch (categoryId) {
-      case 1: return '👕'; // T-Shirts
-      case 2: return '🧥'; // Hoodies & Sweatshirts
-      case 3: return '🎩'; // Accessories
-      case 4: return '👟'; // Shoes
-      case 5: return '🧥'; // Jackets
-      case 6: return '👖'; // Pants & Jeans
-      case 7: return '👗'; // Dresses & Skirts
-      case 8: return '🎒'; // Bags
-      default: return '🛍️'; // Default
+      case 1: return 'checkroom'; // T-Shirts
+      case 2: return 'dry_cleaning'; // Hoodies & Sweatshirts
+      case 3: return 'watch'; // Accessories
+      case 4: return 'fitness_center'; // Shoes
+      case 5: return 'local_fire_department'; // Jackets
+      case 6: return 'straighten'; // Pants & Jeans
+      case 7: return 'face_retouching_natural'; // Dresses & Skirts
+      case 8: return 'backpack'; // Bags
+      default: return 'shopping_bag'; // Default
     }
   }
 
@@ -536,7 +561,11 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addToCart() {
-    if (!this.selectedSize() || !this.product()) {
+    const product = this.product();
+    const size = this.selectedSize();
+    const quantity = this.quantity();
+
+    if (!size || !product) {
       return;
     }
 
@@ -544,14 +573,16 @@ export class ProductDetailComponent implements OnInit {
 
     // Simulate API call delay
     setTimeout(() => {
+      // Add to cart using cart service
+      this.cartService.addToCart(product, quantity, size);
+      
       this.addingToCart.set(false);
       this.addedToCart.set(true);
       
-      // Log the cart action (replace with actual cart service later)
       console.log('Added to cart:', {
-        product: this.product(),
-        size: this.selectedSize(),
-        quantity: this.quantity()
+        product: product.name,
+        size: size,
+        quantity: quantity
       });
 
       // Hide success message after 3 seconds

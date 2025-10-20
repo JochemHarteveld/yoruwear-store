@@ -1,0 +1,241 @@
+<div class="checkout-container">
+  <!-- Left Column: Form Sections -->
+  <div class="checkout-form-container">
+    <form class="unified-checkout-form">
+      @if (!(authService.isAuthenticated$ | async)) {
+        <div class="auth-options">
+          <div class="auth-suggestion">
+            <div class="auth-icon">
+              <span class="material-icons">person_add</span>
+            </div>
+            <div class="auth-content">
+              <h4>Create account for 10% off + faster checkout</h4>
+              <p>Save your information and get exclusive discounts</p>
+            </div>
+            <button type="button" class="btn secondary" (click)="goToSignup()">Sign Up</button>
+          </div>
+          
+          <div class="divider">
+            <span>or</span>
+          </div>
+
+          <div class="signin-link">
+            Already have an account? <button type="button" class="link-btn" (click)="goToSignin()">Sign in</button>
+          </div>
+        </div>
+      }
+
+      <!-- Contact Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="material-icons">person</span>
+          <h4>Contact Information</h4>
+        </div>
+        
+        <div class="form-group">
+          <label for="fullName">Full Name *</label>
+          <input type="text" 
+                 id="fullName" 
+                 [value]="orderForm().contact.fullName"
+                 (input)="onInputChange($event, 'contact', 'fullName')"
+                 name="fullName"
+                 placeholder="Enter your full name" 
+                 required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" 
+                   id="email" 
+                   [value]="orderForm().contact.email"
+                   (input)="onInputChange($event, 'contact', 'email')"
+                   name="email"
+                   placeholder="Enter your email" 
+                   required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" 
+                   id="phone" 
+                   [value]="orderForm().contact.phone"
+                   (input)="onInputChange($event, 'contact', 'phone')"
+                   name="phone"
+                   placeholder="Enter your phone number" 
+                   required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="material-icons">home</span>
+          <h4>Delivery Address</h4>
+        </div>
+        
+        <div class="form-group">
+          <label for="streetAddress">Street Address *</label>
+          <input type="text" 
+                 id="streetAddress" 
+                 [value]="orderForm().address.streetAddress"
+                 (input)="onInputChange($event, 'address', 'streetAddress')"
+                 name="streetAddress"
+                 placeholder="Enter your street address" 
+                 required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city">City *</label>
+            <input type="text" 
+                   id="city" 
+                   [value]="orderForm().address.city"
+                   (input)="onInputChange($event, 'address', 'city')"
+                   name="city"
+                   placeholder="Enter your city" 
+                   required>
+          </div>
+
+          <div class="form-group">
+            <label for="postalCode">Postal Code *</label>
+            <input type="text" 
+                   id="postalCode" 
+                   [value]="orderForm().address.postalCode"
+                   (input)="onInputChange($event, 'address', 'postalCode')"
+                   name="postalCode"
+                   placeholder="1234 AB" 
+                   required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="country">Country *</label>
+          <select id="country" 
+                  [value]="orderForm().address.country"
+                  (change)="onCountryChange($event)"
+                  name="country" required>
+            <option value="Netherlands">Netherlands</option>
+            <option value="Belgium">Belgium</option>
+            <option value="Germany">Germany</option>
+            <option value="France">France</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Delivery Method Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="material-icons">local_shipping</span>
+          <h4>Delivery Method</h4>
+        </div>
+        
+        <div class="delivery-options horizontal">
+          <div class="delivery-option" 
+               [class.selected]="orderForm().delivery.method === 'standard'"
+               (click)="selectDeliveryMethod('standard', 4.95)">
+            <div class="option-content">
+              <div class="option-header">
+                <span class="material-icons">local_shipping</span>
+                <div class="option-info">
+                  <h5>Standard Delivery</h5>
+                  <p>3-5 business days</p>
+                </div>
+              </div>
+              <div class="option-price">€4.95</div>
+            </div>
+            <div class="option-check">
+              <span class="material-icons">{{ orderForm().delivery.method === 'standard' ? 'radio_button_checked' : 'radio_button_unchecked' }}</span>
+            </div>
+          </div>
+
+          <div class="delivery-option" 
+               [class.selected]="orderForm().delivery.method === 'express'"
+               (click)="selectDeliveryMethod('express', 9.95)">
+            <div class="option-content">
+              <div class="option-header">
+                <span class="material-icons">flash_on</span>
+                <div class="option-info">
+                  <h5>Express Delivery</h5>
+                  <p>1-2 business days</p>
+                </div>
+              </div>
+              <div class="option-price">€9.95</div>
+            </div>
+            <div class="option-check">
+              <span class="material-icons">{{ orderForm().delivery.method === 'express' ? 'radio_button_checked' : 'radio_button_unchecked' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Method Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="material-icons">payment</span>
+          <h4>Payment Method</h4>
+        </div>
+        
+        <div class="payment-methods horizontal">
+          <div class="payment-method" 
+               [class.selected]="orderForm().payment.method === 'ideal'"
+               (click)="selectPaymentMethod('ideal')">
+            <div class="payment-icon">
+              <span class="material-icons">account_balance</span>
+            </div>
+            <div class="payment-info">
+              <h5>iDEAL</h5>
+              <p>Pay with your bank</p>
+            </div>
+            <div class="payment-check">
+              <span class="material-icons">{{ orderForm().payment.method === 'ideal' ? 'radio_button_checked' : 'radio_button_unchecked' }}</span>
+            </div>
+          </div>
+
+          <div class="payment-method" 
+               [class.selected]="orderForm().payment.method === 'applepay'"
+               (click)="selectPaymentMethod('applepay')">
+            <div class="payment-icon apple-pay">
+              <span class="material-icons">phone_iphone</span>
+            </div>
+            <div class="payment-info">
+              <h5>Apple Pay</h5>
+              <p>Quick and secure</p>
+            </div>
+            <div class="payment-check">
+              <span class="material-icons">{{ orderForm().payment.method === 'applepay' ? 'radio_button_checked' : 'radio_button_unchecked' }}</span>
+            </div>
+          </div>
+
+          <div class="payment-method" 
+               [class.selected]="orderForm().payment.method === 'googlepay'"
+               (click)="selectPaymentMethod('googlepay')">
+            <div class="payment-icon google-pay">
+              <span class="material-icons">account_balance_wallet</span>
+            </div>
+            <div class="payment-info">
+              <h5>Google Pay</h5>
+              <p>Fast checkout</p>
+            </div>
+            <div class="payment-check">
+              <span class="material-icons">{{ orderForm().payment.method === 'googlepay' ? 'radio_button_checked' : 'radio_button_unchecked' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Right Column: Order Summary -->
+  <app-order-summary 
+    [orderForm]="orderForm()"
+    [finalTotal]="getFinalTotal()"
+    [subtotal]="getSubtotal()"
+    [isFirstTimeBuyer]="isFirstTimeBuyer()"
+    [isProcessing]="isProcessing()"
+    (goBack)="onGoBack()"
+    (completeOrder)="onCompleteOrder()"
+    [isFormValid]="isCheckoutFormValid()">
+  </app-order-summary>
+</div>

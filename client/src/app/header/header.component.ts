@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { AuthService } from '../services/auth.service';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-header',
@@ -18,29 +19,25 @@ import { AuthService } from '../services/auth.service';
       </nav>
       <div class="header-actions">
         <div class="cart" aria-label="Shopping cart">
-          <button class="cart-btn">
-            <span class="icon">🧺</span>
-            <span class="count">{{ cartCount }}</span>
-          </button>
+          <a routerLink="/cart" class="cart-btn">
+            <span class="material-icons">shopping_cart</span>
+            <span class="cart-label">Cart</span>
+            <span class="count">{{ cartService.itemCount() }}</span>
+          </a>
         </div>
         
         @if (authService.isAuthenticated$ | async) {
           <!-- Authenticated User UI -->
           <div class="user-menu">
-            <span class="welcome-text">Hi, {{ ((authService.currentUser$ | async)?.name || 'User').split(' ')[0] }}!</span>
             <a routerLink="/profile" class="profile-btn">
-              <span class="icon">👤</span>
+              <span class="material-icons">person</span>
               Profile
             </a>
-            <button class="logout-btn" (click)="onLogout()">
-              <span class="icon">🚪</span>
-              Logout
-            </button>
           </div>
         } @else {
           <!-- Guest UI -->
           <a routerLink="/signin" class="signin-btn">
-            <span class="icon">👤</span>
+            <span class="material-icons">person</span>
             Sign In
           </a>
         }
@@ -116,28 +113,65 @@ import { AuthService } from '../services/auth.service';
       }
       .cart-btn,
       .signin-btn {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
         color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 0.45rem 0.6rem;
-        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 0.65rem 1rem;
+        border-radius: 16px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
-        font-weight: 700;
-        backdrop-filter: blur(4px);
+        gap: 0.6rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+                    0 2px 8px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        font-weight: 600;
+        backdrop-filter: blur(12px);
         text-decoration: none;
-        transition: all 160ms cubic-bezier(0.2, 0.9, 0.2, 1);
+        transition: all 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+        font-size: 0.875rem;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .cart-btn::before,
+      .signin-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 600ms ease;
+      }
+      
+      .cart-btn:hover::before,
+      .signin-btn:hover::before {
+        left: 100%;
+      }
+      
+      .cart-btn:hover,
+      .signin-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 
+                    0 4px 12px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.25);
       }
       .signin-btn {
-        background: linear-gradient(180deg, var(--accent), rgba(124, 92, 255, 0.8));
-        border: 1px solid rgba(124, 92, 255, 0.3);
+        background: linear-gradient(135deg, var(--accent), rgba(124, 92, 255, 0.8));
+        border: 1px solid rgba(124, 92, 255, 0.4);
+        box-shadow: 0 8px 32px rgba(124, 92, 255, 0.3), 
+                    0 2px 8px rgba(124, 92, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
       }
       .signin-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(124, 92, 255, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(124, 92, 255, 0.4), 
+                    0 4px 12px rgba(124, 92, 255, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        border-color: rgba(124, 92, 255, 0.6);
       }
       .user-menu {
         display: flex;
@@ -149,67 +183,75 @@ import { AuthService } from '../services/auth.service';
         font-weight: 600;
         font-size: 0.875rem;
       }
-      .logout-btn {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 0.45rem 0.6rem;
-        border-radius: 10px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
-        font-weight: 700;
-        backdrop-filter: blur(4px);
-        text-decoration: none;
-        transition: all 160ms cubic-bezier(0.2, 0.9, 0.2, 1);
-        font-size: 0.875rem;
-      }
-      .logout-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(255, 56, 96, 0.2);
-        background: linear-gradient(180deg, rgba(255, 56, 96, 0.1), rgba(255, 56, 96, 0.05));
-        border: 1px solid rgba(255, 56, 96, 0.2);
-      }
+
       .profile-btn {
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
         color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 0.45rem 0.6rem;
-        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 0.65rem 1rem;
+        border-radius: 16px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
-        font-weight: 700;
-        backdrop-filter: blur(4px);
+        gap: 0.6rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+                    0 2px 8px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        font-weight: 600;
+        backdrop-filter: blur(12px);
         text-decoration: none;
-        transition: all 160ms cubic-bezier(0.2, 0.9, 0.2, 1);
+        transition: all 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
         font-size: 0.875rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .profile-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 600ms ease;
+      }
+      .profile-btn:hover::before {
+        left: 100%;
       }
       .profile-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(124, 92, 255, 0.2);
-        background: linear-gradient(180deg, rgba(124, 92, 255, 0.1), rgba(124, 92, 255, 0.05));
-        border: 1px solid rgba(124, 92, 255, 0.2);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(124, 92, 255, 0.3), 
+                    0 4px 12px rgba(124, 92, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        background: linear-gradient(135deg, rgba(124, 92, 255, 0.15), rgba(124, 92, 255, 0.08));
+        border: 1px solid rgba(124, 92, 255, 0.3);
       }
-      .cart .icon {
-        font-size: 1.05rem;
+      .material-icons {
+        font-size: 1.2rem;
         line-height: 1;
+        vertical-align: middle;
       }
+      .cart-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #fff;
+      }
+      
       .count {
         display: inline-grid;
         place-items: center;
-        min-width: 1.55rem;
-        height: 1.55rem;
-        padding: 0 0.35rem;
-        background: var(--danger);
+        min-width: 1.4rem;
+        height: 1.4rem;
+        padding: 0 0.3rem;
+        background: linear-gradient(135deg, var(--danger), #e73c5e);
         color: white;
         border-radius: 999px;
-        font-size: 0.78rem;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+        font-size: 0.75rem;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(255, 56, 96, 0.4), 
+                    0 2px 4px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
       }
       @media (max-width: 640px) {
         .nav {
@@ -225,18 +267,17 @@ import { AuthService } from '../services/auth.service';
           gap: 0.5rem;
         }
         .signin-btn {
-          padding: 0.4rem 0.5rem;
-          font-size: 0.875rem;
-        }
-        .logout-btn {
-          padding: 0.4rem 0.5rem;
-          font-size: 0.875rem;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.8rem;
         }
         .profile-btn {
-          padding: 0.4rem 0.5rem;
-          font-size: 0.875rem;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.8rem;
         }
-        .welcome-text {
+        .cart-btn {
+          padding: 0.5rem 0.75rem;
+        }
+        .cart-label {
           display: none;
         }
       }
@@ -246,26 +287,10 @@ import { AuthService } from '../services/auth.service';
 export class HeaderComponent implements OnInit {
   private router = inject(Router);
   public authService = inject(AuthService);
-  
-  cartCount = 0;
+  public cartService = inject(CartService);
 
   ngOnInit() {
     // Initialize auth state when header loads
     this.authService.initializeAuth();
-  }
-
-  onLogout() {
-    this.authService.logout().subscribe({
-      next: () => {
-        console.log('Logout successful');
-        // Navigate to home page
-        this.router.navigate(['/']);
-      },
-      error: (error) => {
-        console.error('Logout error:', error);
-        // Even if there's an error, navigate to home (local state is cleared)
-        this.router.navigate(['/']);
-      }
-    });
   }
 }
