@@ -10,7 +10,13 @@ export const AuthModel = {
       minLength: 8,
       maxLength: 128,
       description: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-    })
+    }),
+    fullName: t.Optional(t.String({ maxLength: 200 })),
+    phone: t.Optional(t.String({ maxLength: 20 })),
+    streetAddress: t.Optional(t.String({ maxLength: 255 })),
+    city: t.Optional(t.String({ maxLength: 100 })),
+    postalCode: t.Optional(t.String({ maxLength: 20 })),
+    country: t.Optional(t.String({ maxLength: 100 }))
   }),
 
   loginBody: t.Object({
@@ -27,6 +33,13 @@ export const AuthModel = {
     id: t.Number(),
     email: t.String(),
     name: t.String(),
+    fullName: t.Optional(t.String()),
+    phone: t.Optional(t.String()),
+    streetAddress: t.Optional(t.String()),
+    city: t.Optional(t.String()),
+    postalCode: t.Optional(t.String()),
+    country: t.Optional(t.String()),
+    isFirstPurchase: t.Optional(t.Boolean()),
     createdAt: t.Optional(t.String()),
     updatedAt: t.Optional(t.String())
   }),

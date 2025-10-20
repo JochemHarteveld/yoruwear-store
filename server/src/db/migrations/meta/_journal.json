@@ -15,6 +15,13 @@
       "when": 1760881408881,
       "tag": "0001_massive_echo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1760964329120,
+      "tag": "0002_lumpy_ulik",
+      "breakpoints": true
     }
   ]
 }

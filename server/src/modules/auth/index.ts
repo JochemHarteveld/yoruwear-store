@@ -96,6 +96,40 @@ export const auth = new Elysia({ prefix: '/auth' })
       tags: ['Authentication']
     }
   })
+
+  .put('/profile', async ({ body, headers, set }) => {
+    try {
+      const authorization = headers.authorization;
+      
+      if (!authorization || !authorization.startsWith('Bearer ')) {
+        set.status = 401;
+        return { error: 'Authorization token required' };
+      }
+      
+      const token = authorization.slice(7);
+      const userPayload = AuthUtils.verifyAccessToken(token);
+      const updatedUser = await AuthService.updateUserProfile(userPayload.userId, body);
+      return { user: updatedUser };
+    } catch (error) {
+      set.status = 400;
+      return { 
+        error: error instanceof Error ? error.message : 'Failed to update profile' 
+      };
+    }
+  }, {
+    body: t.Object({
+      fullName: t.Optional(t.String()),
+      phone: t.Optional(t.String()),
+      streetAddress: t.Optional(t.String()),
+      city: t.Optional(t.String()),
+      postalCode: t.Optional(t.String()),
+      country: t.Optional(t.String())
+    }),
+    detail: {
+      summary: 'Update user profile',
+      tags: ['Authentication']
+    }
+  })
   
   .post('/logout', async ({ headers, set }) => {
     try {

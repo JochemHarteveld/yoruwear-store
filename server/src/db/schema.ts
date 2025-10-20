@@ -1,4 +1,4 @@
-import { mysqlTable, serial, varchar, text, timestamp, decimal, int, bigint } from 'drizzle-orm/mysql-core';
+import { mysqlTable, serial, varchar, text, timestamp, decimal, int, bigint, boolean } from 'drizzle-orm/mysql-core';
 import { relations } from 'drizzle-orm';
 
 // Users table
@@ -8,6 +8,14 @@ export const users = mysqlTable('users', {
   name: varchar('name', { length: 255 }).notNull(),
   passwordHash: varchar('password_hash', { length: 255 }).notNull(),
   refreshToken: varchar('refresh_token', { length: 500 }),
+  // Delivery information fields
+  fullName: varchar('full_name', { length: 200 }),
+  phone: varchar('phone', { length: 20 }),
+  streetAddress: varchar('street_address', { length: 255 }),
+  city: varchar('city', { length: 100 }),
+  postalCode: varchar('postal_code', { length: 20 }),
+  country: varchar('country', { length: 100 }),
+  isFirstPurchase: boolean('is_first_purchase').default(true),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });
@@ -36,9 +44,30 @@ export const products = mysqlTable('products', {
 // Orders table
 export const orders = mysqlTable('orders', {
   id: serial('id').primaryKey(),
+  orderNumber: varchar('order_number', { length: 50 }).notNull().unique(),
   userId: bigint('user_id', { mode: 'bigint', unsigned: true }).references(() => users.id),
+  
+  // Contact information
+  contactName: varchar('contact_name', { length: 200 }).notNull(),
+  contactEmail: varchar('contact_email', { length: 255 }).notNull(),
+  contactPhone: varchar('contact_phone', { length: 20 }).notNull(),
+  
+  // Delivery address
+  streetAddress: varchar('street_address', { length: 255 }).notNull(),
+  city: varchar('city', { length: 100 }).notNull(),
+  postalCode: varchar('postal_code', { length: 20 }).notNull(),
+  country: varchar('country', { length: 100 }).notNull(),
+  
+  // Delivery and payment
+  deliveryMethod: varchar('delivery_method', { length: 50 }).notNull(),
+  deliveryCost: decimal('delivery_cost', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  paymentMethod: varchar('payment_method', { length: 50 }).notNull(),
+  
+  // Totals
+  subtotal: decimal('subtotal', { precision: 10, scale: 2 }).notNull(),
   total: decimal('total', { precision: 10, scale: 2 }).notNull(),
   status: varchar('status', { length: 50 }).notNull().default('pending'),
+  
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });

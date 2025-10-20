@@ -8,6 +8,7 @@ import { auth } from './modules/auth';
 import { user } from './modules/user';
 import { product } from './modules/product';
 import { category } from './modules/category';
+import { OrderController } from './modules/order';
 
 /**
  * Database initialization service
@@ -83,6 +84,9 @@ const app = new Elysia()
       .use(product)   // /api/products/*
       .use(category)  // /api/categories/*
   )
+  
+  // Order module - separate endpoint (already has prefix)
+  .use(OrderController) // /api/orders/*
   
 
 // Initialize database and start server

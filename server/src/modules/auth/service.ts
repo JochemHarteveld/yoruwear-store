@@ -14,7 +14,17 @@ export abstract class AuthService {
    * Register a new user
    */
   static async register(data: RegisterBody): Promise<AuthSuccessResponse> {
-    const { name, email, password } = data;
+    const { 
+      name, 
+      email, 
+      password, 
+      fullName, 
+      phone, 
+      streetAddress, 
+      city, 
+      postalCode, 
+      country 
+    } = data;
     
     // Validate password strength
     const passwordValidation = AuthUtils.isValidPassword(password);
@@ -42,7 +52,14 @@ export abstract class AuthService {
       .values({
         name,
         email,
-        passwordHash
+        passwordHash,
+        fullName,
+        phone,
+        streetAddress,
+        city,
+        postalCode,
+        country,
+        isFirstPurchase: true // New users get first-time buyer discount
       });
     
     // Get the created user by email since we just created it
@@ -71,7 +88,14 @@ export abstract class AuthService {
       user: {
         id: Number(newUser.id),
         email: newUser.email,
-        name: newUser.name
+        name: newUser.name,
+        fullName: newUser.fullName || undefined,
+        phone: newUser.phone || undefined,
+        streetAddress: newUser.streetAddress || undefined,
+        city: newUser.city || undefined,
+        postalCode: newUser.postalCode || undefined,
+        country: newUser.country || undefined,
+        isFirstPurchase: newUser.isFirstPurchase ?? undefined
       },
       tokens
     };
@@ -117,7 +141,14 @@ export abstract class AuthService {
       user: {
         id: Number(userData.id),
         email: userData.email,
-        name: userData.name
+        name: userData.name,
+        fullName: userData.fullName || undefined,
+        phone: userData.phone || undefined,
+        streetAddress: userData.streetAddress || undefined,
+        city: userData.city || undefined,
+        postalCode: userData.postalCode || undefined,
+        country: userData.country || undefined,
+        isFirstPurchase: userData.isFirstPurchase ?? undefined
       },
       tokens
     };
@@ -166,6 +197,13 @@ export abstract class AuthService {
         id: users.id,
         email: users.email,
         name: users.name,
+        fullName: users.fullName,
+        phone: users.phone,
+        streetAddress: users.streetAddress,
+        city: users.city,
+        postalCode: users.postalCode,
+        country: users.country,
+        isFirstPurchase: users.isFirstPurchase,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt
       })
@@ -181,11 +219,46 @@ export abstract class AuthService {
       id: Number(userData.id),
       email: userData.email,
       name: userData.name,
+      fullName: userData.fullName || undefined,
+      phone: userData.phone || undefined,
+      streetAddress: userData.streetAddress || undefined,
+      city: userData.city || undefined,
+      postalCode: userData.postalCode || undefined,
+      country: userData.country || undefined,
+      isFirstPurchase: userData.isFirstPurchase ?? undefined,
       createdAt: userData.createdAt?.toISOString(),
       updatedAt: userData.updatedAt?.toISOString()
     };
   }
   
+  /**
+   * Update user profile
+   */
+  static async updateUserProfile(userId: number, profileData: Partial<{
+    fullName?: string;
+    phone?: string;
+    streetAddress?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+  }>): Promise<UserResponse> {
+    // Update user in database
+    await db
+      .update(users)
+      .set({
+        fullName: profileData.fullName,
+        phone: profileData.phone,
+        streetAddress: profileData.streetAddress,
+        city: profileData.city,
+        postalCode: profileData.postalCode,
+        country: profileData.country,
+      })
+      .where(eq(users.id, userId));
+
+    // Return updated user data
+    return await this.getUserById(userId);
+  }
+
   /**
    * Logout user by clearing refresh token
    */

@@ -106,6 +106,31 @@ export async function ensureTablesExist() {
           console.log('⚠️ Could not add refresh_token column:', error.message);
         }
       }
+
+      // Add delivery information fields
+      const deliveryFields = [
+        { name: 'phone', type: 'varchar(20)', description: 'Phone number' },
+        { name: 'first_name', type: 'varchar(100)', description: 'First name' },
+        { name: 'last_name', type: 'varchar(100)', description: 'Last name' },
+        { name: 'street_address', type: 'varchar(255)', description: 'Street address' },
+        { name: 'city', type: 'varchar(100)', description: 'City' },
+        { name: 'postal_code', type: 'varchar(20)', description: 'Postal code' },
+        { name: 'country', type: 'varchar(100)', description: 'Country' },
+        { name: 'is_first_purchase', type: 'boolean DEFAULT true', description: 'First purchase flag for discount' }
+      ];
+
+      for (const field of deliveryFields) {
+        try {
+          await connection.execute(`ALTER TABLE \`users\` ADD COLUMN \`${field.name}\` ${field.type}`);
+          console.log(`✅ Added ${field.name} column`);
+        } catch (error: any) {
+          if (error.code === 'ER_DUP_FIELDNAME') {
+            console.log(`ℹ️ ${field.name} column already exists`);
+          } else {
+            console.log(`⚠️ Could not add ${field.name} column:`, error.message);
+          }
+        }
+      }
       
     } catch (error: any) {
       console.log('⚠️ Error updating users table:', error.message);
