@@ -27,7 +27,7 @@ export const config: Config = {
           'https://jochemharteveld.github.io/yoruwear-store',
           process.env.FRONTEND_URL || 'https://jochemharteveld.github.io/yoruwear-store'
         ]
-      : ['http://localhost:4200', 'http://localhost:3000']
+      : ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:4201']
   },
   environment: (process.env.NODE_ENV as 'development' | 'production') || 'development',
   jwt: {

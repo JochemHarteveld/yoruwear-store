@@ -14,63 +14,82 @@
         (click)="filterByCategory(null)">
         All Products
       </button>
-      <button 
-        *ngFor="let category of categories()" 
-        class="filter-btn"
-        [class.active]="selectedCategory() === category.id"
-        (click)="filterByCategory(category.id)">
-        {{ category.name }}
-      </button>
+      @for (category of categories(); track category.id) {
+        <button 
+          class="filter-btn"
+          [class.active]="selectedCategory() === category.id"
+          (click)="filterByCategory(category.id)">
+          {{ category.name }}
+        </button>
+      }
     </div>
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="loading()" class="loading">
-    <div class="spinner"></div>
-    <p>Loading products...</p>
-  </div>
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading products...</p>
+    </div>
+  }
 
   <!-- Error State -->
-  <div *ngIf="error()" class="error">
-    <p>{{ error() }}</p>
-    <button (click)="loadProducts()" class="retry-btn">Try Again</button>
-  </div>
+  @if (error()) {
+    <div class="error">
+      <p>{{ error() }}</p>
+      <button (click)="loadProducts()" class="retry-btn">Try Again</button>
+    </div>
+  }
 
   <!-- Products Grid -->
-  <div *ngIf="!loading() && !error()" class="products-grid">
-    <div *ngIf="filteredProducts.length === 0" class="no-products">
-      <p>No products found in this category.</p>
-    </div>
-    
-    <div *ngFor="let product of filteredProducts" class="product-card">
-      <div class="product-image">
-        <!-- Placeholder for product image -->
-        <div class="image-placeholder">
-          <span class="product-icon">👕</span>
+  @if (!loading() && !error()) {
+    <div class="products-grid">
+      @if (filteredProducts.length === 0) {
+        <div class="no-products">
+          <p>No products found in this category.</p>
         </div>
-      </div>
+      }
       
-      <div class="product-info">
-        <div class="product-category">{{ getCategoryName(product.categoryId) }}</div>
-        <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-description">{{ product.description }}</p>
-        
-        <div class="product-footer">
-          <div class="product-price">{{ formatPrice(product.price) }}</div>
-          <div class="product-stock" [class.low-stock]="product.stock < 10">
-            <span *ngIf="product.stock > 0">{{ product.stock }} in stock</span>
-            <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
+      @for (product of filteredProducts; track product.id) {
+        <div class="product-card">
+          <div class="product-image">
+            <!-- Placeholder for product image -->
+            <div class="image-placeholder">
+              <span class="product-icon">👕</span>
+            </div>
+          </div>
+      
+          <div class="product-info">
+            <div class="product-category">{{ getCategoryName(product.categoryId) }}</div>
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-description">{{ product.description }}</p>
+            
+            <div class="product-footer">
+              <div class="product-price">{{ formatPrice(product.price) }}</div>
+              <div class="product-stock" [class.low-stock]="product.stock < 10">
+                @if (product.stock > 0) {
+                  <span>{{ product.stock }} in stock</span>
+                }
+                @if (product.stock === 0) {
+                  <span class="out-of-stock">Out of stock</span>
+                }
+              </div>
+            </div>
+            
+            <button 
+              class="add-to-cart-btn" 
+              [disabled]="product.stock === 0"
+              (click)="addToCart(product)">
+              @if (product.stock > 0) {
+                <span>Add to Cart</span>
+              }
+              @if (product.stock === 0) {
+                <span>Sold Out</span>
+              }
+            </button>
           </div>
         </div>
-        
-        <button 
-          class="add-to-cart-btn" 
-          [disabled]="product.stock === 0"
-          (click)="addToCart(product)">
-          <span *ngIf="product.stock > 0">Add to Cart</span>
-          <span *ngIf="product.stock === 0">Sold Out</span>
-        </button>
-      </div>
+      }
     </div>
-  </div>
+  }
 </div>

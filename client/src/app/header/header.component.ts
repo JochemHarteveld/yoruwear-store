@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterLink, Router } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AsyncPipe],
   template: `
     <header class="nav">
       <div class="brand">YoruWear</div>
@@ -14,11 +16,34 @@ import { RouterLink } from '@angular/router';
         <a routerLink="/about">About</a>
         <a routerLink="/contact">Contact</a>
       </nav>
-      <div class="cart" aria-label="Shopping cart">
-        <button class="cart-btn">
-          <span class="icon">🧺</span>
-          <span class="count">{{ cartCount }}</span>
-        </button>
+      <div class="header-actions">
+        <div class="cart" aria-label="Shopping cart">
+          <button class="cart-btn">
+            <span class="icon">🧺</span>
+            <span class="count">{{ cartCount }}</span>
+          </button>
+        </div>
+        
+        @if (authService.isAuthenticated$ | async) {
+          <!-- Authenticated User UI -->
+          <div class="user-menu">
+            <span class="welcome-text">Hi, {{ ((authService.currentUser$ | async)?.name || 'User').split(' ')[0] }}!</span>
+            <a routerLink="/profile" class="profile-btn">
+              <span class="icon">👤</span>
+              Profile
+            </a>
+            <button class="logout-btn" (click)="onLogout()">
+              <span class="icon">🚪</span>
+              Logout
+            </button>
+          </div>
+        } @else {
+          <!-- Guest UI -->
+          <a routerLink="/signin" class="signin-btn">
+            <span class="icon">👤</span>
+            Sign In
+          </a>
+        }
       </div>
     </header>
   `,
@@ -80,11 +105,17 @@ import { RouterLink } from '@angular/router';
         transform: translateY(-2px);
         box-shadow: 0 6px 18px rgba(124, 92, 255, 0.12);
       }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
       .cart {
         display: flex;
         align-items: center;
       }
-      .cart-btn {
+      .cart-btn,
+      .signin-btn {
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
         color: #fff;
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -97,6 +128,72 @@ import { RouterLink } from '@angular/router';
         box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
         font-weight: 700;
         backdrop-filter: blur(4px);
+        text-decoration: none;
+        transition: all 160ms cubic-bezier(0.2, 0.9, 0.2, 1);
+      }
+      .signin-btn {
+        background: linear-gradient(180deg, var(--accent), rgba(124, 92, 255, 0.8));
+        border: 1px solid rgba(124, 92, 255, 0.3);
+      }
+      .signin-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(124, 92, 255, 0.3);
+      }
+      .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .welcome-text {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+      .logout-btn {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 0.45rem 0.6rem;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+        font-weight: 700;
+        backdrop-filter: blur(4px);
+        text-decoration: none;
+        transition: all 160ms cubic-bezier(0.2, 0.9, 0.2, 1);
+        font-size: 0.875rem;
+      }
+      .logout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 56, 96, 0.2);
+        background: linear-gradient(180deg, rgba(255, 56, 96, 0.1), rgba(255, 56, 96, 0.05));
+        border: 1px solid rgba(255, 56, 96, 0.2);
+      }
+      .profile-btn {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 0.45rem 0.6rem;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+        font-weight: 700;
+        backdrop-filter: blur(4px);
+        text-decoration: none;
+        transition: all 160ms cubic-bezier(0.2, 0.9, 0.2, 1);
+        font-size: 0.875rem;
+      }
+      .profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 92, 255, 0.2);
+        background: linear-gradient(180deg, rgba(124, 92, 255, 0.1), rgba(124, 92, 255, 0.05));
+        border: 1px solid rgba(124, 92, 255, 0.2);
       }
       .cart .icon {
         font-size: 1.05rem;
@@ -124,10 +221,51 @@ import { RouterLink } from '@angular/router';
         .brand {
           font-size: 1rem;
         }
+        .header-actions {
+          gap: 0.5rem;
+        }
+        .signin-btn {
+          padding: 0.4rem 0.5rem;
+          font-size: 0.875rem;
+        }
+        .logout-btn {
+          padding: 0.4rem 0.5rem;
+          font-size: 0.875rem;
+        }
+        .profile-btn {
+          padding: 0.4rem 0.5rem;
+          font-size: 0.875rem;
+        }
+        .welcome-text {
+          display: none;
+        }
       }
     `,
   ],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
+  private router = inject(Router);
+  public authService = inject(AuthService);
+  
   cartCount = 0;
+
+  ngOnInit() {
+    // Initialize auth state when header loads
+    this.authService.initializeAuth();
+  }
+
+  onLogout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        console.log('Logout successful');
+        // Navigate to home page
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        console.error('Logout error:', error);
+        // Even if there's an error, navigate to home (local state is cleared)
+        this.router.navigate(['/']);
+      }
+    });
+  }
 }

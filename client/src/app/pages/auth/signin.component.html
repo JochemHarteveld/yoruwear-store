@@ -1,0 +1,56 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Welcome Back</h1>
+      <p class="auth-subtitle">Sign in to your YoruWear account</p>
+    </div>
+
+    <form (ngSubmit)="onSignIn()" class="auth-form">
+      @if (errorMessage()) {
+        <div class="error-message">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+          type="email" 
+          id="email"
+          [value]="email()"
+          (input)="updateEmail($event)"
+          placeholder="Enter your email"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password"
+          [value]="password()"
+          (input)="updatePassword($event)"
+          placeholder="Enter your password"
+          required>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="auth-btn primary" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="spinner"></span>
+            Signing In...
+          } @else {
+            Sign In
+          }
+        </button>
+      </div>
+
+      <div class="auth-footer">
+        <p>Don't have an account? 
+          <a routerLink="/signup" class="auth-link">Sign up now</a>
+        </p>
+        <a href="#" class="forgot-password">Forgot your password?</a>
+      </div>
+    </form>
+  </div>
+</div>

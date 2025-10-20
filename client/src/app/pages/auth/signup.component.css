@@ -1,0 +1,21 @@
+/* Import shared auth styles */
+@import './signin.component.css';
+
+/* Additional styles specific to signup */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.auth-card {
+  max-width: 480px;
+}
+
+/* Responsive adjustments for signup */
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
