@@ -148,6 +148,19 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        console.error('Logout error:', error);
+        // Even if logout fails on server, redirect to home
+        this.router.navigate(['/']);
+      }
+    });
+  }
+
   // Personal info methods
   startEditingPersonal(): void {
     this.editingPersonal.set(true);

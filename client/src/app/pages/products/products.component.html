@@ -53,8 +53,15 @@
       @for (product of filteredProducts; track product.id) {
         <div class="product-card" (click)="viewProduct(product.id)">
           <div class="product-image">
-            <!-- Placeholder for product image -->
-            <div class="image-placeholder">
+            <!-- Real product image with fallback to placeholder -->
+            <img 
+              [src]="getProductImageUrl(product)" 
+              [alt]="product.name"
+              (error)="onImageError($event)"
+              loading="lazy"
+              class="product-img"
+            />
+            <div class="image-placeholder" style="display: none;">
               <span class="material-icons product-icon">{{ getCategoryIcon(product.categoryId) }}</span>
             </div>
           </div>

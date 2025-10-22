@@ -14,6 +14,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:migrate-yoruwear": "bun run migrate-yoruwear.ts",
     "lint": "echo 'Linting skipped - Bun project with TypeScript checking at runtime'",
     "lint:fix": "echo 'Lint fix not configured'"
   },

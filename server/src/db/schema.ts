@@ -16,6 +16,7 @@ export const users = mysqlTable('users', {
   postalCode: varchar('postal_code', { length: 20 }),
   country: varchar('country', { length: 100 }),
   isFirstPurchase: boolean('is_first_purchase').default(true),
+  isAdmin: boolean('is_admin').default(false),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });

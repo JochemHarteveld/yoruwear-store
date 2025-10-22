@@ -31,6 +31,7 @@ export interface User {
   postalCode?: string;
   country?: string;
   isFirstPurchase?: boolean;
+  isAdmin?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

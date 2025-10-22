@@ -1,0 +1,14 @@
+Product ID: 19
+Product Name: Rave Guardian Armor Tee
+Category: LED T-Shirts
+Description: Futuristic T-shirt with armor-like LED panels that activate sequentially with music builds. Military-inspired design.
+Price: €104.99
+
+AI Image Prompt:
+"A gray T-shirt with geometric LED armor panel patterns in white and blue, cyberpunk festival setting, futuristic military aesthetic, protective gear inspired design"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 19-rave-guardian-armor-tee.png
+4. Replace this .txt file with the image

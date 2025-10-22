@@ -1,0 +1,14 @@
+Product ID: 25
+Product Name: Synth Wave Visor
+Category: Accessories
+Description: Retro-futuristic LED visor with synthwave-inspired patterns and built-in audio visualization.
+Price: €74.99
+
+AI Image Prompt:
+"A sleek LED visor with pink and cyan synthwave patterns, 80s retro aesthetic, neon grid background, cyberpunk festival fashion, nostalgic futurism"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 25-synth-wave-visor.png
+4. Replace this .txt file with the image

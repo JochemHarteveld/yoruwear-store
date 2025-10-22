@@ -1,0 +1,14 @@
+Product ID: 14
+Product Name: Sound Wave Bandana
+Category: Accessories
+Description: Stylish bandana with embedded LEDs that visualize sound waves. Lightweight and comfortable for all-day wear.
+Price: €39.99
+
+AI Image Prompt:
+"A dark bandana with LED sound wave patterns in green and yellow, worn around the neck, festival desert setting, bohemian rave aesthetic, artistic lighting"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 14-sound-wave-bandana.png
+4. Replace this .txt file with the image

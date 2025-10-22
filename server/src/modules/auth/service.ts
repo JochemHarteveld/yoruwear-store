@@ -148,7 +148,8 @@ export abstract class AuthService {
         city: userData.city || undefined,
         postalCode: userData.postalCode || undefined,
         country: userData.country || undefined,
-        isFirstPurchase: userData.isFirstPurchase ?? undefined
+        isFirstPurchase: userData.isFirstPurchase ?? undefined,
+        isAdmin: userData.isAdmin ?? false
       },
       tokens
     };

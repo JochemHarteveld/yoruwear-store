@@ -1,0 +1,14 @@
+Product ID: 26
+Product Name: Echo Chamber Scarf
+Category: Accessories
+Description: Lightweight scarf with echo-effect LEDs that create trailing light patterns as you move.
+Price: €64.99
+
+AI Image Prompt:
+"A flowing scarf with trailing LED light effects in purple and blue, motion blur patterns, graceful movement at night festival, ethereal flowing fabric aesthetic"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 26-echo-chamber-scarf.png
+4. Replace this .txt file with the image

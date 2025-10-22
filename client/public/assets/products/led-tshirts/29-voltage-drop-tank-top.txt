@@ -1,0 +1,14 @@
+Product ID: 29
+Product Name: Voltage Drop Tank Top
+Category: LED T-Shirts
+Description: High-energy tank top with voltage-meter LED display that reacts to music intensity. Perfect for hot festival days.
+Price: €69.99
+
+AI Image Prompt:
+"A black tank top with vertical LED voltage meter patterns in electric blue and yellow, summer festival setting, energetic dance scene, athletic festival fashion"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 29-voltage-drop-tank-top.png
+4. Replace this .txt file with the image

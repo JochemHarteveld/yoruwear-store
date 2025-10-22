@@ -1,0 +1,14 @@
+Product ID: 21
+Product Name: Crystal Matrix Sweater
+Category: Hoodies & Sweaters
+Description: Geometric sweater with crystalline LED formations that shatter and reform with tempo changes.
+Price: €139.99
+
+AI Image Prompt:
+"A white sweater with geometric crystal LED patterns in rainbow holographic colors, mineral-inspired design, prismatic light effects, crystalline festival aesthetic"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 21-crystal-matrix-sweater.png
+4. Replace this .txt file with the image

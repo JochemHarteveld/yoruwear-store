@@ -1,0 +1,14 @@
+Product ID: 7
+Product Name: Neural Network Hoodie
+Category: Hoodies & Sweaters
+Description: Tech-inspired hoodie with interconnected LED nodes that light up in response to sound complexity. Features minimalist design.
+Price: €159.99
+
+AI Image Prompt:
+"A gray hoodie with geometric LED network patterns resembling neural connections, cyberpunk festival aesthetic, neon city lights background, high-tech minimalist design, square format"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 7-neural-network-hoodie.png
+4. Replace this .txt file with the image

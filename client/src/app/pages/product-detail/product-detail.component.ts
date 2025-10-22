@@ -34,7 +34,14 @@ import { CommonModule } from '@angular/common';
           <div class="product-content">
             <!-- Product Image -->
             <div class="product-image">
-              <div class="image-placeholder">
+              <img 
+                [src]="getProductImageUrl(prod)" 
+                [alt]="prod.name"
+                (error)="onImageError($event)"
+                loading="lazy"
+                class="product-img"
+              />
+              <div class="image-placeholder" style="display: none;">
                 <div class="placeholder-icon material-icons">{{ getCategoryIcon(prod.categoryId) }}</div>
                 <span class="placeholder-text">Product Image</span>
               </div>
@@ -215,6 +222,14 @@ import { CommonModule } from '@angular/common';
       justify-content: center;
       height: 100%;
       color: var(--text-muted, #94a3b8);
+    }
+
+    .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 16px;
     }
 
     .placeholder-icon {
@@ -523,6 +538,32 @@ export class ProductDetailComponent implements OnInit {
 
   formatPrice(price: string): string {
     return CurrencyUtils.formatPrice(price);
+  }
+
+  getProductImageUrl(product: Product): string {
+    const categoryMap: { [key: number]: string } = {
+      1: 'led-tshirts',        // LED T-Shirts
+      2: 'hoodies-sweaters',   // Hoodies & Sweaters
+      3: 'bottoms',           // Bottoms
+      4: 'accessories',       // Accessories
+      5: 'festival-sets'      // Festival Sets
+    };
+    
+    const category = categoryMap[product.categoryId] || 'led-tshirts';
+    const slug = product.name.toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+    
+    return `/assets/products/${category}/${product.id}-${slug}.png`;
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    const placeholder = target.nextElementSibling as HTMLElement;
+    if (target && placeholder) {
+      target.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
   }
 
   getCategoryIcon(categoryId: number): string {

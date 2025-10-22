@@ -40,6 +40,7 @@ export const AuthModel = {
     postalCode: t.Optional(t.String()),
     country: t.Optional(t.String()),
     isFirstPurchase: t.Optional(t.Boolean()),
+    isAdmin: t.Optional(t.Boolean()),
     createdAt: t.Optional(t.String()),
     updatedAt: t.Optional(t.String())
   }),

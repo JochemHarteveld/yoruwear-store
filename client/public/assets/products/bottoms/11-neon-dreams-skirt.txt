@@ -1,0 +1,14 @@
+Product ID: 11
+Product Name: Neon Dreams Skirt
+Category: Bottoms
+Description: Flowing A-line skirt with cascading LED patterns. Creates beautiful light trails while dancing.
+Price: €124.99
+
+AI Image Prompt:
+"A flowing black mini skirt with cascading pink and blue LED patterns creating light trails, woman spinning at a night festival, motion blur effects, dreamy ethereal aesthetic"
+
+Instructions:
+1. Generate image using the prompt above
+2. Save as 800x800px JPG/PNG
+3. Rename this file to: 11-neon-dreams-skirt.png
+4. Replace this .txt file with the image

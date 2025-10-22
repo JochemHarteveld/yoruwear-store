@@ -114,6 +114,13 @@
   font-weight: 500;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
 .edit-button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -126,12 +133,33 @@
   align-items: center;
   gap: 0.5rem;
   font-weight: 500;
-  margin-top: 1rem;
+  margin: 0;
 }
 
 .edit-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.logout-button {
+  background: linear-gradient(135deg, #ff416c 0%, #ff4757 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.logout-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 65, 108, 0.3);
+  background: linear-gradient(135deg, #ff3742 0%, #ff3333 100%);
 }
 
 /* Forms */

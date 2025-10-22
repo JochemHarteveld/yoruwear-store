@@ -176,6 +176,18 @@
   overflow: hidden;
 }
 
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform var(--transition-normal);
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.05);
+}
+
 .image-placeholder {
   width: 100%;
   height: 100%;

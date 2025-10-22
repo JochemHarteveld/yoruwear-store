@@ -17,6 +17,18 @@ import { CartService } from '../services/cart.service';
         <a routerLink="/about">About</a>
         <a routerLink="/contact">Contact</a>
       </nav>
+      
+      @if (authService.isAuthenticated$ | async; as isAuth) {
+        @if ((authService.currentUser$ | async)?.isAdmin) {
+          <div class="admin-chip">
+            <a routerLink="/admin" class="admin-link">
+              <span class="material-icons">admin_panel_settings</span>
+              Admin Panel
+            </a>
+          </div>
+        }
+      }
+      
       <div class="header-actions">
         <div class="cart" aria-label="Shopping cart">
           <a routerLink="/cart" class="cart-btn">
@@ -102,6 +114,37 @@ import { CartService } from '../services/cart.service';
         transform: translateY(-2px);
         box-shadow: 0 6px 18px rgba(124, 92, 255, 0.12);
       }
+      
+      .admin-chip {
+        display: flex;
+        align-items: center;
+      }
+      
+      .admin-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        transition: all 200ms ease;
+      }
+      
+      .admin-link:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        background: linear-gradient(135deg, #ff5252, #ff7043);
+      }
+      
+      .admin-link .material-icons {
+        font-size: 1rem;
+      }
+      
       .header-actions {
         display: flex;
         align-items: center;

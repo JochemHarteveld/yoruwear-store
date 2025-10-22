@@ -21,6 +21,15 @@ Modern e-commerce application built with Angular frontend and Bun backend, featu
 - **Bun** (for backend development)
 - **Docker** (optional, for containerized development)
 
+admin@yoruwear.com
+Admin123!
+        
+customer@example.com
+Customer123!
+
+DefaultPassword123!
+
+
 ## 🏃 Quick Start
 
 ### 🐳 Docker Development (Recommended)

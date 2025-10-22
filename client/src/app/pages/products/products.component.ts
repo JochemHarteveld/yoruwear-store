@@ -91,6 +91,32 @@ export class ProductsComponent implements OnInit {
     return CurrencyUtils.formatPrice(price);
   }
 
+  getProductImageUrl(product: Product): string {
+    const categoryMap: { [key: number]: string } = {
+      1: 'led-tshirts',        // LED T-Shirts
+      2: 'hoodies-sweaters',   // Hoodies & Sweaters
+      3: 'bottoms',           // Bottoms
+      4: 'accessories',       // Accessories
+      5: 'festival-sets'      // Festival Sets
+    };
+    
+    const category = categoryMap[product.categoryId] || 'led-tshirts';
+    const slug = product.name.toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+    
+    return `/assets/products/${category}/${product.id}-${slug}.png`;
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    const placeholder = target.nextElementSibling as HTMLElement;
+    if (target && placeholder) {
+      target.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
+  }
+
   viewProduct(productId: number): void {
     this.router.navigate(['/product', productId]);
   }
