@@ -206,13 +206,45 @@ export const admin = new Elysia({ prefix: '/admin' })
         .leftJoin(users, eq(orders.userId, users.id))
         .orderBy(desc(orders.createdAt));
 
-      // Convert BigInt fields to strings for JSON serialization
+      // Get order items for all orders
+      const allOrderItems = await db
+        .select({
+          orderId: orderItems.orderId,
+          id: orderItems.id,
+          productId: orderItems.productId,
+          productName: products.name,
+          quantity: orderItems.quantity,
+          price: orderItems.price,
+        })
+        .from(orderItems)
+        .leftJoin(products, eq(orderItems.productId, products.id));
+
+      // Group order items by order ID
+      const itemsByOrderId = allOrderItems.reduce((acc, item) => {
+        if (!item.orderId) return acc;
+        
+        const orderId = item.orderId.toString();
+        if (!acc[orderId]) {
+          acc[orderId] = [];
+        }
+        acc[orderId].push({
+          id: item.id.toString(),
+          productId: item.productId?.toString() || '',
+          productName: item.productName || 'Unknown Product',
+          quantity: Number(item.quantity),
+          price: item.price,
+        });
+        return acc;
+      }, {} as Record<string, any[]>);
+
+      // Convert BigInt fields to strings for JSON serialization and add items
       const serializedOrders = ordersWithDetails.map(order => ({
         ...order,
         id: order.id.toString(),
         userId: order.userId?.toString(),
         createdAt: order.createdAt ? new Date(order.createdAt).toISOString() : null,
         updatedAt: order.updatedAt ? new Date(order.updatedAt).toISOString() : null,
+        items: itemsByOrderId[order.id.toString()] || [],
       }));
 
       return {

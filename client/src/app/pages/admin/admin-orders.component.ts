@@ -1,25 +1,40 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { OrderService } from '../../services/order.service';
+import { AdminService } from '../../services/admin.service';
+import { AuthService } from '../../services/auth.service';
+import { filter, take } from 'rxjs';
 
 interface AdminOrder {
-  id: number;
+  id: string;
   orderNumber: string;
-  userEmail: string;
-  userName: string;
+  userId?: string;
+  userEmail?: string;
+  userName?: string;
   total: string;
+  subtotal: string;
+  deliveryCost: string;
   status: string;
   contactEmail: string;
   contactPhone: string;
-  deliveryAddress: string;
+  contactName: string;
+  streetAddress: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  paymentMethod: string;
+  deliveryMethod: string;
   createdAt: string;
-  items: Array<{
-    id: number;
-    productName: string;
-    quantity: number;
-    price: string;
-  }>;
+  updatedAt: string;
+  items: AdminOrderItem[];
+}
+
+interface AdminOrderItem {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: string;
 }
 
 @Component({
@@ -105,21 +120,37 @@ interface AdminOrder {
                       <div class="details-content">
                         <div class="customer-info">
                           <h4>Customer Information</h4>
-                          <p><strong>Name:</strong> {{ order.userName }}</p>
+                          <p><strong>Name:</strong> {{ order.contactName }}</p>
                           <p><strong>Email:</strong> {{ order.contactEmail }}</p>
                           <p><strong>Phone:</strong> {{ order.contactPhone }}</p>
-                          <p><strong>Address:</strong> {{ order.deliveryAddress }}</p>
+                          <div class="address-info">
+                            <p><strong>Delivery Address:</strong></p>
+                            <p>{{ order.streetAddress }}</p>
+                            <p>{{ order.postalCode }} {{ order.city }}</p>
+                            <p>{{ order.country }}</p>
+                          </div>
+                          <p><strong>Payment Method:</strong> {{ order.paymentMethod | titlecase }}</p>
+                          <p><strong>Delivery Method:</strong> {{ order.deliveryMethod | titlecase }}</p>
                         </div>
                         <div class="order-items">
                           <h4>Order Items</h4>
                           <div class="items-list">
-                            @for (item of order.items; track item.id) {
-                              <div class="item-row">
-                                <span class="item-name">{{ item.productName }}</span>
-                                <span class="item-quantity">Qty: {{ item.quantity }}</span>
-                                <span class="item-price">€{{ item.price }}</span>
-                              </div>
+                            @if (order.items && order.items.length > 0) {
+                              @for (item of order.items; track item.id) {
+                                <div class="item-row">
+                                  <span class="item-name">{{ item.productName }}</span>
+                                  <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                                  <span class="item-price">€{{ item.price }}</span>
+                                </div>
+                              }
+                            } @else {
+                              <p class="no-items">No items found for this order</p>
                             }
+                          </div>
+                          <div class="order-totals">
+                            <p><strong>Subtotal:</strong> €{{ order.subtotal }}</p>
+                            <p><strong>Delivery:</strong> €{{ order.deliveryCost }}</p>
+                            <p class="total"><strong>Total:</strong> €{{ order.total }}</p>
                           </div>
                         </div>
                       </div>
@@ -311,56 +342,154 @@ interface AdminOrder {
     }
 
     .order-details td {
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, rgba(124, 92, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border-bottom: 2px solid rgba(124, 92, 255, 0.2);
+      padding: 0;
     }
 
     .details-content {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1.5fr;
       gap: 2rem;
-      padding: 1rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      margin: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .customer-info, .order-items {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .customer-info h4, .order-items h4 {
       color: var(--brand-primary);
-      margin: 0 0 1rem 0;
-      font-size: 1.1rem;
+      margin: 0 0 1.5rem 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .customer-info h4::before {
+      content: '👤';
+      font-size: 1rem;
+    }
+
+    .order-items h4::before {
+      content: '📦';
+      font-size: 1rem;
     }
 
     .customer-info p {
-      margin: 0.5rem 0;
+      margin: 0.75rem 0;
       color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .customer-info strong {
+      color: var(--text-primary);
+      min-width: 120px;
+      display: inline-block;
+    }
+
+    .address-info {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-left: 3px solid var(--brand-primary);
+    }
+
+    .address-info p:first-child {
+      margin-top: 0;
+      font-weight: 600;
+      color: var(--brand-primary);
     }
 
     .items-list {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     .item-row {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 1rem;
       align-items: center;
-      padding: 0.5rem;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 8px;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .item-row:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
     }
 
     .item-name {
-      flex: 1;
-      font-weight: 500;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 1rem;
     }
 
     .item-quantity {
       color: var(--text-secondary);
       font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-weight: 500;
     }
 
     .item-price {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--brand-primary);
+      font-size: 1.1rem;
+    }
+
+    .no-items {
+      text-align: center;
+      color: var(--text-secondary);
+      font-style: italic;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    .order-totals {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .order-totals p {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+      color: var(--text-secondary);
+    }
+
+    .order-totals .total {
+      font-size: 1.1rem;
+      color: var(--brand-primary);
+      font-weight: 700;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 0.5rem;
+      margin-top: 0.5rem;
     }
 
     .no-orders {
@@ -402,37 +531,105 @@ interface AdminOrder {
 
       .details-content {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        margin: 0.5rem;
+      }
+
+      .customer-info, .order-items {
+        padding: 1rem;
+      }
+
+      .item-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        text-align: center;
+      }
+
+      .item-name {
+        font-size: 0.9rem;
+      }
+
+      .customer-info strong {
+        min-width: auto;
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .customer-info p {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .orders-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-header h1 {
+        font-size: 2rem;
+      }
+
+      .details-content {
+        padding: 1rem;
       }
     }
   `]
 })
 export class AdminOrdersComponent implements OnInit {
-  private orderService = inject(OrderService);
+  private adminService = inject(AdminService);
+  private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   orders = signal<AdminOrder[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
-  expandedOrders = new Set<number>();
+  expandedOrders = new Set<string>();
 
   ngOnInit() {
-    this.loadOrders();
+    // Wait for user authentication before loading orders
+    this.authService.currentUser$.pipe(
+      filter(user => user !== null),
+      take(1)
+    ).subscribe(user => {
+      if (user?.isAdmin) {
+        this.loadOrders();
+      } else {
+        this.error.set('Access denied: Admin privileges required');
+        this.loading.set(false);
+      }
+    });
   }
 
   loadOrders() {
     this.loading.set(true);
     this.error.set(null);
     
-    // TODO: Replace with actual admin orders service call
-    // For now, we'll use placeholder data
-    setTimeout(() => {
-      this.orders.set([]);
-      this.loading.set(false);
-    }, 1000);
+    this.adminService.getAllOrders().subscribe({
+      next: (response) => {
+        console.log('AdminOrdersComponent: Received orders response:', response);
+        if (response.success && response.data) {
+          this.orders.set(response.data);
+          console.log('AdminOrdersComponent: Loaded orders:', response.data.length);
+        } else {
+          this.error.set('Failed to load orders');
+        }
+        this.loading.set(false);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('AdminOrdersComponent: Error loading orders:', err);
+        this.error.set('Failed to load orders');
+        this.loading.set(false);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  toggleOrderDetails(orderId: number) {
+  toggleOrderDetails(orderId: string) {
     if (this.expandedOrders.has(orderId)) {
       this.expandedOrders.delete(orderId);
     } else {
