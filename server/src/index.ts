@@ -116,7 +116,7 @@ const app = new Elysia()
 
 // Initialize database and start server
 console.log('🚀 Starting YoruWear API Server...');
-initializeDatabase().then((dbInitialized) => {
+initializeDatabase().then(async (dbInitialized) => {
   if (!dbInitialized) {
     console.error('❌ Failed to initialize database. Exiting...');
     process.exit(1);
@@ -132,16 +132,36 @@ initializeDatabase().then((dbInitialized) => {
   console.log(`📱 Environment: ${config.environment}`);
   console.log(`📋 API Documentation will be available at http://localhost:${config.port}/swagger`);
   
-  // Start the HTTP server with Railway-optimized configuration
+  // Start the HTTP server with better error handling and retry logic
   console.log('🚀 Starting server...');
   
+  const startServer = async (retries = 3): Promise<any> => {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const server = app.listen({
+          port: config.port,
+          hostname: '0.0.0.0',
+          reusePort: process.env.NODE_ENV === 'production'
+        });
+        
+        console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
+        return server;
+      } catch (error: any) {
+        console.warn(`⚠️  Server start attempt ${i + 1} failed:`, error.message);
+        if (i < retries - 1) {
+          console.log(`🔄 Retrying in 2 seconds...`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } else {
+          throw error;
+        }
+      }
+    }
+  };
+  
   try {
-    const server = app.listen({
-      port: config.port,
-      hostname: '0.0.0.0',
-    });
+    const server = await startServer();
     
-    console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
+    console.log(`✅ YoruWear API Server is ready!`);
     
     // Handle graceful shutdown
     process.on('SIGTERM', () => {

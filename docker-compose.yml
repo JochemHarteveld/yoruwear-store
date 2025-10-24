@@ -23,18 +23,19 @@ services:
       context: ./server
       dockerfile: Dockerfile.dev # Now points to development Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:3001"
     environment:
       - NODE_ENV=development
+      - PORT=3001
       - DATABASE_URL=mysql://yoruwear_user:yourpassword@mysql:3306/yoruwear
     volumes:
       - ./server/src:/app/src # Mount source for hot reload
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
+    restart: "no"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3000/" ]
+      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3001/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
