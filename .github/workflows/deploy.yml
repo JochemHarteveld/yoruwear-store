@@ -123,14 +123,20 @@ jobs:
     name: Deploy Backend to Railway
     needs: backend-build
     runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      SVC_ID: yoruwear-api
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to Railway
-        uses: railwayapp/railway-deploy@v1.1.0
-        with:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          SERVICE: yoruwear-api
+      - name: Deploy to Railway (Server)
+        working-directory: ./server
+        run: |
+          echo "🚀 Deploying YoruWear API to Railway..."
+          railway up --service=yoruwear-api
+          echo "✅ Railway deployment completed!"
