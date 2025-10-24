@@ -21,7 +21,7 @@ export const config: Config = {
     console.log(`🔧 Railway PORT env variable: ${envPort}`);
     
     // Use Railway's assigned port or fallback to 3000 for local dev
-    const port = envPort ? Number(envPort) : 3000;
+    const port = envPort ? Number(envPort) : 3010;
     
     // Validate port number
     if (isNaN(port) || port < 1 || port > 65535) {

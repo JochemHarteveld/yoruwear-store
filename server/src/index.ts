@@ -50,6 +50,18 @@ const app = new Elysia()
     allowedHeaders: ['Content-Type', 'Authorization'],
   }))
   
+   // Health check endpoint
+  .get('/', () => ({
+    message: 'YoruWear API is running!',
+    version: '2.0.3',
+    environment: config.environment,
+    timestamp: new Date().toISOString()
+  }), {
+    detail: {
+      summary: 'Health check endpoint',
+      tags: ['System']
+    }
+  })
   // Health check endpoints for Railway
   .get('/health', () => {
     return { 
@@ -87,18 +99,7 @@ const app = new Elysia()
     return { error: 'Internal server error' };
   })
   
-  // Health check endpoint
-  .get('/', () => ({
-    message: 'YoruWear API is running!',
-    version: '2.0.3',
-    environment: config.environment,
-    timestamp: new Date().toISOString()
-  }), {
-    detail: {
-      summary: 'Health check endpoint',
-      tags: ['System']
-    }
-  })
+ 
   
   // API modules - each as a separate controller
   .group('/api', (app) => 
