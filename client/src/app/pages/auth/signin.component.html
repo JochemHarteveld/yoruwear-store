@@ -45,6 +45,29 @@
         </button>
       </div>
 
+      <!-- Development Quick Login Buttons -->
+      @if (isDevelopment) {
+        <div class="dev-buttons">
+          <div class="dev-label">Development Quick Login:</div>
+          <div class="dev-button-group">
+            <button 
+              type="button" 
+              class="auth-btn secondary dev-btn" 
+              (click)="signInAsUser()"
+              [disabled]="isLoading()">
+              Sign in as User
+            </button>
+            <button 
+              type="button" 
+              class="auth-btn secondary dev-btn" 
+              (click)="signInAsAdmin()"
+              [disabled]="isLoading()">
+              Sign in as Admin
+            </button>
+          </div>
+        </div>
+      }
+
       <div class="auth-footer">
         <p>Don't have an account? 
           <a routerLink="/signup" class="auth-link">Sign up now</a>

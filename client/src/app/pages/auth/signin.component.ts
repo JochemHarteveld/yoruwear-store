@@ -2,6 +2,7 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-signin',
@@ -80,5 +81,26 @@ export class SigninComponent implements OnInit {
     if (this.errorMessage()) {
       this.errorMessage.set('');
     }
+  }
+
+  // Development helper methods
+  get isDevelopment(): boolean {
+    return !environment.production;
+  }
+
+  signInAsUser() {
+    if (!this.isDevelopment) return;
+    
+    this.email.set('user@example.com');
+    this.password.set('user123');
+    this.onSignIn();
+  }
+
+  signInAsAdmin() {
+    if (!this.isDevelopment) return;
+    
+    this.email.set('admin@yoruwear.com');
+    this.password.set('admin123');
+    this.onSignIn();
   }
 }
