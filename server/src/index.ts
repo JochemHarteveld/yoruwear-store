@@ -140,8 +140,7 @@ initializeDatabase().then(async (dbInitialized) => {
       try {
         const server = app.listen({
           port: config.port,
-          hostname: '0.0.0.0',
-          reusePort: process.env.NODE_ENV === 'production'
+          hostname: '0.0.0.0'
         });
         
         console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);

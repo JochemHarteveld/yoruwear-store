@@ -25,7 +25,7 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 # Expose the development port
-EXPOSE 3001
+EXPOSE 8080
 
 # Start the server normally (hot reload via volume mounting)
 # Avoid --watch in Docker as it can cause port conflicts
