@@ -92,6 +92,12 @@ export class ProductsComponent implements OnInit {
   }
 
   getProductImageUrl(product: Product): string {
+    // Use the imageUrl from the server, fallback to generated path if not available
+    if (product.imageUrl) {
+      return product.imageUrl;
+    }
+    
+    // Fallback logic (legacy)
     const categoryMap: { [key: number]: string } = {
       1: 'led-tshirts',        // LED T-Shirts
       2: 'hoodies-sweaters',   // Hoodies & Sweaters

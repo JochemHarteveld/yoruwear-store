@@ -6,7 +6,7 @@ export const products = [
     price: "89.99",
     stock: 45,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/pulse-wave-led-tee.jpg"
+    imageUrl: "/assets/products/led-tshirts/1-pulse-wave-led-tee.png"
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const products = [
     price: "94.99",
     stock: 32,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/bass-drop-reactive-shirt.jpg"
+    imageUrl: "/assets/products/led-tshirts/2-bass-drop-reactive-shirt.png"
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const products = [
     price: "99.99",
     stock: 28,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/spectrum-analyser-tee.jpg"
+    imageUrl: "/assets/products/led-tshirts/3-spectrum-analyser-tee.png"
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ export const products = [
     price: "109.99",
     stock: 22,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/heartbeat-sync-shirt.jpg"
+    imageUrl: "/assets/products/led-tshirts/4-heartbeat-sync-shirt.png"
   },
   {
     id: 5,
@@ -42,7 +42,7 @@ export const products = [
     price: "87.99",
     stock: 38,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/galaxy-swirl-led-tee.jpg"
+    imageUrl: "/assets/products/led-tshirts/5-galaxy-swirl-led-tee.png"
   },
   {
     id: 6,
@@ -51,7 +51,7 @@ export const products = [
     price: "149.99",
     stock: 25,
     categoryId: BigInt(2),
-    imageUrl: "/assets/products/beat-thunder-hoodie.jpg"
+    imageUrl: "/assets/products/hoodies-sweaters/6-beat-thunder-hoodie.png"
   },
   {
     id: 7,
@@ -60,7 +60,7 @@ export const products = [
     price: "159.99",
     stock: 18,
     categoryId: BigInt(2),
-    imageUrl: "/assets/products/neural-network-hoodie.jpg"
+    imageUrl: "/assets/products/hoodies-sweaters/7-neural-network-hoodie.png"
   },
   {
     id: 8,
@@ -69,7 +69,7 @@ export const products = [
     price: "134.99",
     stock: 30,
     categoryId: BigInt(2),
-    imageUrl: "/assets/products/flame-reactive-sweater.jpg"
+    imageUrl: "/assets/products/hoodies-sweaters/8-flame-reactive-sweater.png"
   },
   {
     id: 9,
@@ -78,7 +78,7 @@ export const products = [
     price: "179.99",
     stock: 20,
     categoryId: BigInt(3),
-    imageUrl: "/assets/products/prism-light-cargo-pants.jpg"
+    imageUrl: "/assets/products/bottoms/9-prism-light-cargo-pants.png"
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ export const products = [
     price: "79.99",
     stock: 42,
     categoryId: BigInt(3),
-    imageUrl: "/assets/products/cyber-glow-shorts.jpg"
+    imageUrl: "/assets/products/bottoms/10-cyber-glow-shorts.png"
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ export const products = [
     price: "124.99",
     stock: 15,
     categoryId: BigInt(3),
-    imageUrl: "/assets/products/neon-dreams-skirt.jpg"
+    imageUrl: "/assets/products/bottoms/11-neon-dreams-skirt.png"
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ export const products = [
     price: "69.99",
     stock: 55,
     categoryId: BigInt(4),
-    imageUrl: "/assets/products/rhythm-pulse-bucket-hat.jpg"
+    imageUrl: "/assets/products/accessories/12-rhythm-pulse-bucket-hat.png"
   },
   {
     id: 13,
@@ -114,7 +114,7 @@ export const products = [
     price: "54.99",
     stock: 65,
     categoryId: BigInt(4),
-    imageUrl: "/assets/products/bass-reactive-gloves.jpg"
+    imageUrl: "/assets/products/accessories/13-bass-reactive-gloves.png"
   },
   {
     id: 14,
@@ -123,7 +123,7 @@ export const products = [
     price: "39.99",
     stock: 80,
     categoryId: BigInt(4),
-    imageUrl: "/assets/products/sound-wave-bandana.jpg"
+    imageUrl: "/assets/products/accessories/14-sound-wave-bandana.png"
   },
   {
     id: 15,
@@ -132,7 +132,7 @@ export const products = [
     price: "44.99",
     stock: 70,
     categoryId: BigInt(4),
-    imageUrl: "/assets/products/infinity-loop-wristband.jpg"
+    imageUrl: "/assets/products/accessories/15-infinity-loop-wristband.png"
   },
   {
     id: 16,
@@ -141,7 +141,7 @@ export const products = [
     price: "299.99",
     stock: 8,
     categoryId: BigInt(5),
-    imageUrl: "/assets/products/festival-king-complete-set.jpg"
+    imageUrl: "/assets/products/festival-sets/16-festival-king-complete-set.png"
   },
   {
     id: 17,
@@ -150,7 +150,7 @@ export const products = [
     price: "279.99",
     stock: 12,
     categoryId: BigInt(5),
-    imageUrl: "/assets/products/electric-dreams-outfit.jpg"
+    imageUrl: "/assets/products/festival-sets/17-electric-dreams-outfit.png"
   },
   {
     id: 18,
@@ -159,7 +159,7 @@ export const products = [
     price: "119.99",
     stock: 24,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/frequency-rider-tee.jpg"
+    imageUrl: "/assets/products/led-tshirts/18-frequency-rider-tee.png"
   },
   {
     id: 19,
@@ -168,7 +168,7 @@ export const products = [
     price: "104.99",
     stock: 19,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/rave-guardian-armor-tee.jpg"
+    imageUrl: "/assets/products/led-tshirts/19-rave-guardian-armor-tee.png"
   },
   {
     id: 20,
@@ -177,7 +177,7 @@ export const products = [
     price: "144.99",
     stock: 21,
     categoryId: BigInt(2),
-    imageUrl: "/assets/products/melody-vine-hoodie.jpg"
+    imageUrl: "/assets/products/hoodies-sweaters/20-melody-vine-hoodie.png"
   },
   {
     id: 21,
@@ -186,7 +186,7 @@ export const products = [
     price: "139.99",
     stock: 16,
     categoryId: BigInt(2),
-    imageUrl: "/assets/products/crystal-matrix-sweater.jpg"
+    imageUrl: "/assets/products/hoodies-sweaters/21-crystal-matrix-sweater.png"
   },
   {
     id: 22,
@@ -195,7 +195,7 @@ export const products = [
     price: "159.99",
     stock: 28,
     categoryId: BigInt(3),
-    imageUrl: "/assets/products/tempo-track-pants.jpg"
+    imageUrl: "/assets/products/bottoms/22-tempo-track-pants.png"
   },
   {
     id: 23,
@@ -204,7 +204,7 @@ export const products = [
     price: "89.99",
     stock: 35,
     categoryId: BigInt(3),
-    imageUrl: "/assets/products/binary-beat-leggings.jpg"
+    imageUrl: "/assets/products/bottoms/23-binary-beat-leggings.png"
   },
   {
     id: 24,
@@ -213,7 +213,7 @@ export const products = [
     price: "199.99",
     stock: 10,
     categoryId: BigInt(4),
-    imageUrl: "/assets/products/particle-storm-cape.jpg"
+    imageUrl: "/assets/products/accessories/24-particle-storm-cape.png"
   },
   {
     id: 25,
@@ -222,7 +222,7 @@ export const products = [
     price: "74.99",
     stock: 40,
     categoryId: BigInt(4),
-    imageUrl: "/assets/products/synth-wave-visor.jpg"
+    imageUrl: "/assets/products/accessories/25-synth-wave-visor.png"
   },
   {
     id: 26,
@@ -231,7 +231,7 @@ export const products = [
     price: "64.99",
     stock: 45,
     categoryId: BigInt(4),
-    imageUrl: "/assets/products/echo-chamber-scarf.jpg"
+    imageUrl: "/assets/products/accessories/26-echo-chamber-scarf.png"
   },
   {
     id: 27,
@@ -240,7 +240,7 @@ export const products = [
     price: "399.99",
     stock: 5,
     categoryId: BigInt(5),
-    imageUrl: "/assets/products/quantum-dancer-set.jpg"
+    imageUrl: "/assets/products/festival-sets/27-quantum-dancer-set.png"
   },
   {
     id: 28,
@@ -249,7 +249,7 @@ export const products = [
     price: "249.99",
     stock: 14,
     categoryId: BigInt(5),
-    imageUrl: "/assets/products/aurora-festival-package.jpg"
+    imageUrl: "/assets/products/festival-sets/28-aurora-festival-package.png"
   },
   {
     id: 29,
@@ -258,7 +258,7 @@ export const products = [
     price: "69.99",
     stock: 50,
     categoryId: BigInt(1),
-    imageUrl: "/assets/products/voltage-drop-tank-top.jpg"
+    imageUrl: "/assets/products/led-tshirts/29-voltage-drop-tank-top.png"
   },
   {
     id: 30,
@@ -267,6 +267,6 @@ export const products = [
     price: "229.99",
     stock: 7,
     categoryId: BigInt(2),
-    imageUrl: "/assets/products/phoenix-rising-jacket.jpg"
+    imageUrl: "/assets/products/hoodies-sweaters/30-phoenix-rising-jacket.png"
   }
 ];

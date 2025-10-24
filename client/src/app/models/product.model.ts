@@ -5,6 +5,7 @@ export interface Product {
   price: string;
   stock: number;
   categoryId: number;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
