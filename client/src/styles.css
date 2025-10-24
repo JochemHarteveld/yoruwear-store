@@ -1,10 +1,10 @@
 /* Import theme variables first */
 @import './app/styles/theme.css';
 
-/* Global dark theme and fonts */
+/* Load consolidated font weights to reduce bundle size */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
 
-/* Material Icons global styles */
+/* Material Icons - Use SVG icons instead of font for better tree-shaking */
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;

@@ -1,0 +1,4 @@
+/* Optimized Admin Shared Styles - Split for better tree-shaking */
+@import './admin-core.css';
+@import './admin-data.css';
+@import './admin-components.css';

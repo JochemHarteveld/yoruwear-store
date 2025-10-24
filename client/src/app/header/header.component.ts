@@ -58,9 +58,6 @@ import { CartService } from '../services/cart.service';
   `,
   styles: [
     `
-      /* Load Montserrat for brand (fallbacks included) */
-      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
-
       :root {
         --bg-900: #0b1220;
         --bg-800: #0f1724;

@@ -1,0 +1,129 @@
+<div class="admin-orders-container">
+  <div class="admin-header">
+    <h1>
+      <span class="material-icons">receipt_long</span>
+      Order Management
+    </h1>
+    <p class="subtitle">View and manage all customer orders</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading orders...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <div class="error-icon material-icons">error</div>
+      <h2>Error Loading Orders</h2>
+      <p>{{ error() }}</p>
+      <button class="btn secondary" (click)="loadOrders()">Retry</button>
+    </div>
+  } @else {
+    <div class="orders-stats">
+      <div class="stat-card">
+        <div class="stat-value">{{ orders().length }}</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ getPendingCount() }}</div>
+        <div class="stat-label">Pending Orders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">€{{ getTotalRevenue() }}</div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+    </div>
+
+    <div class="orders-table-container">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr class="order-row" [class.pending]="order.status === 'pending'">
+              <td class="order-number">{{ order.orderNumber }}</td>
+              <td class="customer-name">{{ order.userName }}</td>
+              <td class="customer-email">{{ order.contactEmail }}</td>
+              <td class="order-total">€{{ order.total }}</td>
+              <td class="order-status">
+                <span class="status-badge" [class]="order.status">
+                  {{ order.status | titlecase }}
+                </span>
+              </td>
+              <td class="order-date">{{ formatDate(order.createdAt) }}</td>
+              <td class="order-actions">
+                <button class="btn-icon" (click)="toggleOrderDetails(order.id)" 
+                        [title]="expandedOrders.has(order.id) ? 'Hide Details' : 'Show Details'">
+                  <span class="material-icons">
+                    {{ expandedOrders.has(order.id) ? 'expand_less' : 'expand_more' }}
+                  </span>
+                </button>
+              </td>
+            </tr>
+            @if (expandedOrders.has(order.id)) {
+              <tr class="order-details">
+                <td colspan="7">
+                  <div class="details-content">
+                    <div class="customer-info">
+                      <h4>Customer Information</h4>
+                      <p><strong>Name:</strong> {{ order.contactName }}</p>
+                      <p><strong>Email:</strong> {{ order.contactEmail }}</p>
+                      <p><strong>Phone:</strong> {{ order.contactPhone }}</p>
+                      <div class="address-info">
+                        <p><strong>Delivery Address:</strong></p>
+                        <p>{{ order.streetAddress }}</p>
+                        <p>{{ order.postalCode }} {{ order.city }}</p>
+                        <p>{{ order.country }}</p>
+                      </div>
+                      <p><strong>Payment Method:</strong> {{ order.paymentMethod | titlecase }}</p>
+                      <p><strong>Delivery Method:</strong> {{ order.deliveryMethod | titlecase }}</p>
+                    </div>
+                    <div class="order-items">
+                      <h4>Order Items</h4>
+                      <div class="items-list">
+                        @if (order.items && order.items.length > 0) {
+                          @for (item of order.items; track item.id) {
+                            <div class="item-row">
+                              <span class="item-name">{{ item.productName }}</span>
+                              <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                              <span class="item-price">€{{ item.price }}</span>
+                            </div>
+                          }
+                        } @else {
+                          <p class="no-items">No items found for this order</p>
+                        }
+                      </div>
+                      <div class="order-totals">
+                        <p><strong>Subtotal:</strong> €{{ order.subtotal }}</p>
+                        <p><strong>Delivery:</strong> €{{ order.deliveryCost }}</p>
+                        <p class="total"><strong>Total:</strong> €{{ order.total }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+      
+      @if (orders().length === 0) {
+        <div class="no-orders">
+          <span class="material-icons">receipt</span>
+          <h3>No Orders Found</h3>
+          <p>No customer orders have been placed yet.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

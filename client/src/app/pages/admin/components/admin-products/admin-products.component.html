@@ -1,0 +1,148 @@
+<div class="admin-products-container">
+  <div class="admin-header">
+    <h1>
+      <span class="material-icons">inventory_2</span>
+      Product Management
+    </h1>
+    <p class="subtitle">Monitor stock levels and sales performance</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading products...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <div class="error-icon material-icons">error</div>
+      <h2>Error Loading Products</h2>
+      <p>{{ error() }}</p>
+      <button class="btn secondary" (click)="loadProducts()">Retry</button>
+    </div>
+  } @else {
+    <div class="products-stats">
+      <div class="stat-card">
+        <div class="stat-value">{{ productStats().length }}</div>
+        <div class="stat-label">Total Products</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-value">{{ getLowStockCount() }}</div>
+        <div class="stat-label">Low Stock Items</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">€{{ getTotalInventoryValue() }}</div>
+        <div class="stat-label">Inventory Value</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ getBestSellerName() }}</div>
+        <div class="stat-label">Best Seller</div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-buttons">
+        <button class="filter-btn" 
+                [class.active]="currentFilter() === 'all'"
+                (click)="setFilter('all')">
+          All Products
+        </button>
+        <button class="filter-btn" 
+                [class.active]="currentFilter() === 'low-stock'"
+                (click)="setFilter('low-stock')">
+          Low Stock
+        </button>
+        <button class="filter-btn" 
+                [class.active]="currentFilter() === 'best-sellers'"
+                (click)="setFilter('best-sellers')">
+          Best Sellers
+        </button>
+      </div>
+    </div>
+
+    <div class="products-grid">
+      @for (stat of getFilteredProducts(); track stat.product.id) {
+        <div class="product-card" [class.low-stock]="stat.lowStock">
+          <div class="product-image">
+            <img 
+              [src]="getProductImageUrl(stat.product)" 
+              [alt]="stat.product.name"
+              (error)="onImageError($event)"
+              loading="lazy"
+              class="product-img"
+            />
+            <div class="image-placeholder" style="display: none;">
+              <span class="material-icons product-icon">{{ getCategoryIcon(stat.product.categoryId) }}</span>
+            </div>
+            @if (stat.lowStock) {
+              <div class="low-stock-badge">
+                <span class="material-icons">warning</span>
+                Low Stock
+              </div>
+            }
+          </div>
+
+          <div class="product-info">
+            <div class="product-header">
+              <h3 class="product-name">{{ stat.product.name }}</h3>
+              <div class="product-price">€{{ stat.product.price }}</div>
+            </div>
+
+            <div class="product-stats-grid">
+              <div class="stat-item">
+                <span class="stat-icon material-icons">inventory</span>
+                <div class="stat-content">
+                  <div class="stat-number">{{ stat.product.stock }}</div>
+                  <div class="stat-text">In Stock</div>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <span class="stat-icon material-icons">shopping_cart</span>
+                <div class="stat-content">
+                  <div class="stat-number">{{ stat.timesOrdered }}</div>
+                  <div class="stat-text">Times Ordered</div>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <span class="stat-icon material-icons">attach_money</span>
+                <div class="stat-content">
+                  <div class="stat-number">€{{ stat.totalRevenue.toFixed(0) }}</div>
+                  <div class="stat-text">Revenue</div>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <span class="stat-icon material-icons">trending_up</span>
+                <div class="stat-content">
+                  <div class="stat-number">{{ getPopularityScore(stat) }}%</div>
+                  <div class="stat-text">Popularity</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="product-actions">
+              <button class="action-btn" title="Edit Product">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="action-btn" title="View Analytics">
+                <span class="material-icons">analytics</span>
+              </button>
+              <button class="action-btn danger" title="Archive Product">
+                <span class="material-icons">archive</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (getFilteredProducts().length === 0) {
+      <div class="no-products">
+        <span class="material-icons">inventory_2</span>
+        <h3>No Products Found</h3>
+        <p>No products match the current filter criteria.</p>
+      </div>
+    }
+  }
+</div>

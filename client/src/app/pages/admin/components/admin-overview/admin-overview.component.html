@@ -1,0 +1,86 @@
+<div class="admin-overview">
+  <div class="overview-header">
+    <h1>
+      <span class="material-icons">dashboard</span>
+      Admin Dashboard
+    </h1>
+    <p class="subtitle">Welcome to the YoruWear administration panel</p>
+  </div>
+
+  <div class="quick-actions">
+    <div class="action-card">
+      <div class="card-icon">
+        <span class="material-icons">receipt_long</span>
+      </div>
+      <div class="card-content">
+        <h3>Manage Orders</h3>
+        <p>View and manage all customer orders</p>
+        <a routerLink="/admin/orders" class="action-btn">View Orders</a>
+      </div>
+    </div>
+
+    <div class="action-card">
+      <div class="card-icon">
+        <span class="material-icons">inventory_2</span>
+      </div>
+      <div class="card-content">
+        <h3>Product Management</h3>
+        <p>Monitor stock levels and sales performance</p>
+        <a routerLink="/admin/products" class="action-btn">Manage Products</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="overview-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <span class="material-icons">shopping_cart</span>
+      </div>
+      <div class="stat-info">
+        <p></p>
+        <div class="stat-value">{{ stats?.totalOrders || 0 }}</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <span class="material-icons">inventory</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats?.totalProducts || 0 }}</div>
+        <div class="stat-label">Products</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <span class="material-icons">attach_money</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">€{{ stats?.totalRevenue || 0 }}</div>
+        <div class="stat-label">Revenue</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <span class="material-icons">people</span>
+      </div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats?.totalUsers || 0 }}</div>
+        <div class="stat-label">Users</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-error" *ngIf="loading">
+    <span class="material-icons">refresh</span>
+    Loading dashboard data...
+  </div>
+
+  <div class="loading-error error" *ngIf="error">
+    <span class="material-icons">error</span>
+    Failed to load dashboard data: {{ error }}
+  </div>
+</div>
