@@ -4,9 +4,10 @@ FROM oven/bun:latest
 
 WORKDIR /app
 
-# Set environment variables
+# Set environment variables for Railway
 ENV NODE_ENV=production
 ENV BUN_ENV=production
+ENV RAILWAY=true
 
 # Install system dependencies efficiently
 RUN apt-get update && \
@@ -33,12 +34,13 @@ RUN bun build \
 	--sourcemap=none \
 	src/index.ts
 
-# Expose port (Railway will assign via $PORT)
+# Expose port (Railway will assign dynamically via $PORT)
+EXPOSE $PORT
 EXPOSE 3000
 
 # Health check with Railway port support
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-	CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
+	CMD curl -f http://localhost:${PORT:-3000}/health || exit 1
 
-# Use bun runtime for better Railway compatibility  
-# CMD ["bun", "run", "dist/index.js"]
+# Use bun runtime for optimal Railway compatibility
+CMD ["bun", "run", "dist/index.js"]
