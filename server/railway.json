@@ -5,6 +5,7 @@
     "buildCommand": "bun install --frozen-lockfile && bun run build"
   },
   "deploy": {
+    "runtime": "bun",
     "startCommand": "bun src/index.ts",
     "numReplicas": 1,
     "sleepApplication": false,
