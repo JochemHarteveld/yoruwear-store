@@ -113,22 +113,16 @@ initializeDatabase().then((dbInitialized) => {
   console.log(`📱 Environment: ${config.environment}`);
   console.log(`📋 API Documentation will be available at http://localhost:${config.port}/swagger`);
   
-  // Start the HTTP server with error handling
-  try {
-    app.listen({
-      port: config.port,
-      hostname: '0.0.0.0'
-    });
-    
-    console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
-  } catch (error: any) {
-    console.error(`❌ Failed to start server on port ${config.port}:`, error.message);
-    if (error.code === 'EADDRINUSE') {
-      console.log('🔄 Port in use, waiting for Railway to assign a new port...');
-      process.exit(1); // Let Railway restart with a new port
-    }
-    throw error;
-  }
+  // Start the HTTP server with better Railway compatibility
+  console.log('🚀 Starting server...');
+  
+  app.listen({
+    port: config.port,
+    hostname: '0.0.0.0',
+    reusePort: true  // Allow port reuse for Railway
+  });
+  
+  console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
 }).catch((error) => {
   console.error('❌ Failed to initialize database:', error);
   process.exit(1);

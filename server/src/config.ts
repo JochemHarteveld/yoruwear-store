@@ -16,7 +16,13 @@ export interface Config {
 }
 
 export const config: Config = {
-  port: Number(process.env.PORT) || 3000,
+  port: (() => {
+    const envPort = process.env.PORT;
+    console.log(`🔧 Railway PORT env variable: ${envPort}`);
+    const port = Number(envPort) || 3000;
+    console.log(`🔧 Using port: ${port}`);
+    return port;
+  })(),
   database: {
     url: process.env.DATABASE_URL || process.env.MYSQL_DATABASE || 'mysql://yoruwear_user:yourpassword@localhost:3306/yoruwear'
   },
