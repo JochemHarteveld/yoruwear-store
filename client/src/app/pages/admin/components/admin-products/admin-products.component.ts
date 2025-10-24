@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../../../services/product.service';
 import { Product } from '../../../../models/product.model';
+import { environment } from '../../../../../environments/environment';
 
 interface ProductStats {
   product: Product;
@@ -99,7 +100,7 @@ export class AdminProductsComponent implements OnInit {
   getProductImageUrl(product: Product): string {
     // Use the imageUrl from the server, fallback to generated path if not available
     if (product.imageUrl) {
-      return product.imageUrl;
+      return environment.assetsUrl + product.imageUrl;
     }
     
     // Fallback logic (legacy)
@@ -116,7 +117,7 @@ export class AdminProductsComponent implements OnInit {
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-');
     
-    return `/assets/products/${category}/${product.id}-${slug}.png`;
+    return environment.assetsUrl + `/assets/products/${category}/${product.id}-${slug}.png`;
   }
 
   onImageError(event: Event): void {

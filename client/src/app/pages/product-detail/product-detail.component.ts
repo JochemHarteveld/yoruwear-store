@@ -5,6 +5,7 @@ import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
 import { CurrencyUtils } from '../../utils/currency.utils';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-product-detail',
@@ -543,7 +544,7 @@ export class ProductDetailComponent implements OnInit {
   getProductImageUrl(product: Product): string {
     // Use the imageUrl from the server, fallback to generated path if not available
     if (product.imageUrl) {
-      return product.imageUrl;
+      return environment.assetsUrl + product.imageUrl;
     }
     
     // Fallback logic (legacy)
@@ -560,7 +561,7 @@ export class ProductDetailComponent implements OnInit {
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-');
     
-    return `/assets/products/${category}/${product.id}-${slug}.png`;
+    return environment.assetsUrl + `/assets/products/${category}/${product.id}-${slug}.png`;
   }
 
   onImageError(event: Event): void {
