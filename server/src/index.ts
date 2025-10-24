@@ -137,7 +137,6 @@ initializeDatabase().then(async (dbInitialized) => {
   console.log('🚀 Starting server...');
   
   const startServer = async (retries = 3): Promise<any> => {
-    for (let i = 0; i < retries; i++) {
       try {
         const server = app.listen({
           port: config.port,
@@ -147,15 +146,9 @@ initializeDatabase().then(async (dbInitialized) => {
         console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
         return server;
       } catch (error: any) {
-        console.warn(`⚠️  Server start attempt ${i + 1} failed:`, error.message);
-        if (i < retries - 1) {
-          console.log(`🔄 Retrying in 2 seconds...`);
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        } else {
-          throw error;
-        }
+        console.warn(`⚠️  Server start attemptfailed:`, error.message);
       }
-    }
+    
   };
   
   try {
