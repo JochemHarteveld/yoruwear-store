@@ -20,6 +20,9 @@ RUN apt-get update && \
 # Copy only server package files for dependency caching
 COPY package.json bun.lock* ./
 
+# Install dependencies (skip prepare scripts to avoid Husky issues)
+RUN bun install --frozen-lockfile --production --ignore-scripts
+
 # Copy source code (excluding root files via .dockerignore)
 COPY . .
 
