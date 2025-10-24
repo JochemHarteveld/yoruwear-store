@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ["bun"]
+aptPkgs = ["curl"]
+
+[phases.install]
+cmds = ["cd server && bun install --frozen-lockfile"]
+
+[start]
+cmd = "cd server && bun src/index.ts"
+
+[variables]
+NODE_ENV = "production"
+BUN_ENV = "production"

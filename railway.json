@@ -1,0 +1,17 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "cd server && bun install --frozen-lockfile"
+  },
+  "deploy": {
+    "runtime": "V2", 
+    "startCommand": "cd server && bun src/index.ts",
+    "numReplicas": 1,
+    "sleepApplication": false,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 3,
+    "healthcheckPath": "/api/health",
+    "healthcheckTimeout": 30
+  }
+}
