@@ -19,7 +19,16 @@ export const config: Config = {
   port: (() => {
     const envPort = process.env.PORT;
     console.log(`🔧 Railway PORT env variable: ${envPort}`);
-    const port = Number(envPort) || 3000;
+    
+    // Use Railway's assigned port or fallback to 3000 for local dev
+    const port = envPort ? Number(envPort) : 3000;
+    
+    // Validate port number
+    if (isNaN(port) || port < 1 || port > 65535) {
+      console.error(`❌ Invalid port: ${port}`);
+      throw new Error(`Invalid port configuration: ${port}`);
+    }
+    
     console.log(`🔧 Using port: ${port}`);
     return port;
   })(),

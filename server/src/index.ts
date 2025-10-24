@@ -50,6 +50,16 @@ const app = new Elysia()
     allowedHeaders: ['Content-Type', 'Authorization'],
   }))
   
+  // Health check endpoint for Railway
+  .get('/health', () => {
+    return { 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      port: config.port,
+      environment: config.environment
+    };
+  })
+  
   // Global error handling
   .onError({ as: 'global' }, ({ code, error, set }) => {
     console.error(`Global error [${code}]:`, error);
@@ -113,16 +123,28 @@ initializeDatabase().then((dbInitialized) => {
   console.log(`📱 Environment: ${config.environment}`);
   console.log(`📋 API Documentation will be available at http://localhost:${config.port}/swagger`);
   
-  // Start the HTTP server with better Railway compatibility
+  // Start the HTTP server with Railway-optimized configuration
   console.log('🚀 Starting server...');
   
-  app.listen({
-    port: config.port,
-    hostname: '0.0.0.0',
-    reusePort: true  // Allow port reuse for Railway
-  });
-  
-  console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
+  try {
+    const server = app.listen({
+      port: config.port,
+      hostname: '0.0.0.0',
+      reusePort: false  // Disable port reuse for Railway stability
+    });
+    
+    console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
+    
+    // Handle graceful shutdown
+    process.on('SIGTERM', () => {
+      console.log('🛑 Received SIGTERM, shutting down gracefully...');
+      server.stop();
+    });
+    
+  } catch (serverError) {
+    console.error('❌ Failed to start server:', serverError);
+    process.exit(1);
+  }
 }).catch((error) => {
   console.error('❌ Failed to initialize database:', error);
   process.exit(1);
