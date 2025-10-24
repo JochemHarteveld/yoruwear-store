@@ -85,11 +85,11 @@ export class SigninComponent implements OnInit {
 
   // Development helper methods
   get isDevelopment(): boolean {
-    return !environment.production;
+    return environment.showDevButtons;
   }
 
   signInAsUser() {
-    if (!this.isDevelopment) return;
+    if (!environment.showDevButtons) return;
     
     this.email.set('user@example.com');
     this.password.set('user123');
@@ -97,7 +97,7 @@ export class SigninComponent implements OnInit {
   }
 
   signInAsAdmin() {
-    if (!this.isDevelopment) return;
+    if (!environment.showDevButtons) return;
     
     this.email.set('admin@yoruwear.com');
     this.password.set('admin123');
