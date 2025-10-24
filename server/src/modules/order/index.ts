@@ -6,7 +6,7 @@ import { AuthUtils } from '../../utils/auth';
 /**
  * Order Controller - HTTP routing and request validation
  */
-export const OrderController = new Elysia({ prefix: '/api/orders' })
+export const OrderController = new Elysia({ prefix: '/orders' })
   .decorate('orderService', new OrderService())
   .post('/', async ({ body, headers, orderService }) => {
     try {

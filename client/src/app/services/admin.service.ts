@@ -37,7 +37,7 @@ export interface AdminDashboardResponse {
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = `${environment.apiUrl}/api`;
+  private apiUrl = `${environment.apiUrl}`;
 
   constructor(
     private http: HttpClient,

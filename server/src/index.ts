@@ -109,10 +109,11 @@ const app = new Elysia()
       .use(product)   // /api/products/*
       .use(category)  // /api/categories/*
       .use(admin)     // /api/admin/*
+        .use(OrderController) // /api/orders/*
+
   )
   
   // Order module - separate endpoint (already has prefix)
-  .use(OrderController) // /api/orders/*
   
 
 // Initialize database and start server

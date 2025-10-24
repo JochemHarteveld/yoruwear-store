@@ -20,7 +20,7 @@ import { environment } from '../../environments/environment';
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/api/auth`;
+  private apiUrl = `${environment.apiUrl}/auth`;
   
   // Auth state management
   private currentUserSubject = new BehaviorSubject<User | null>(null);

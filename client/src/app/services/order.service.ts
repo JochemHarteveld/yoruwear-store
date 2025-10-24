@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface OrderRequest {
   contact: {
@@ -75,17 +76,17 @@ export interface OrderResponse {
 })
 export class OrderService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = `${environment.apiUrl}/orders`;
 
   createOrder(orderData: OrderRequest): Observable<OrderResponse> {
-    return this.http.post<OrderResponse>(`${this.baseUrl}/orders`, orderData);
+    return this.http.post<OrderResponse>(`${this.baseUrl}`, orderData);
   }
 
   getOrder(orderId: number): Observable<OrderResponse> {
-    return this.http.get<OrderResponse>(`${this.baseUrl}/orders/${orderId}`);
+    return this.http.get<OrderResponse>(`${this.baseUrl}/${orderId}`);
   }
 
   getUserOrders(userId: number): Observable<OrderResponse[]> {
-    return this.http.get<OrderResponse[]>(`${this.baseUrl}/orders/user/${userId}`);
+    return this.http.get<OrderResponse[]>(`${this.baseUrl}/user/${userId}`);
   }
 }
