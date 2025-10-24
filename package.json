@@ -8,8 +8,7 @@
     "test": "npm --prefix client run test",
     "lint": "eslint --ext .ts,.js client server || true",
     "lint:fix": "eslint --fix --ext .ts,.js client server",
-    "format": "prettier --write \"**/*.{ts,js,json,md,css,html}\"",
-    "prepare": "husky install"
+    "format": "prettier --write \"**/*.{ts,js,json,md,css,html}\""
   },
   "lint-staged": {
     "*.{js,ts,json,css,md,html}": [

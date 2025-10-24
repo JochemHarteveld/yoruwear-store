@@ -17,13 +17,10 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/* && \
 	apt-get clean
 
-# Copy package files for dependency caching
+# Copy only server package files for dependency caching
 COPY package.json bun.lock* ./
 
-# Install dependencies
-RUN bun install --frozen-lockfile --production
-
-# Copy source code
+# Copy source code (excluding root files via .dockerignore)
 COPY . .
 
 # Build for production (non-binary for Railway compatibility)
@@ -36,7 +33,6 @@ RUN bun build \
 
 # Expose port (Railway will assign dynamically via $PORT)
 EXPOSE $PORT
-EXPOSE 3000
 
 # Health check with Railway port support
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \

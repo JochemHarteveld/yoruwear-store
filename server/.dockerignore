@@ -1,5 +1,24 @@
+# Ignore root package.json to prevent Husky issues
+../package.json
+../.husky/
+../node_modules/
+../client/
+
+# Local files
 node_modules
 .git
 .gitignore
-bun.lock
 README.md
+.vscode/
+.DS_Store
+
+# Build artifacts
+dist/
+coverage/
+*.tsbuildinfo
+
+# Temporary files
+*.log
+*.env
+*.tmp
+*.temp
