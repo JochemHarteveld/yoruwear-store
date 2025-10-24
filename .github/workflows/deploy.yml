@@ -74,12 +74,7 @@ jobs:
           cd server
           bun run lint
 
-      - name: Upload backend artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-dist
-          path: server/
-          retention-days: 1
+      # Note: No build step needed here - Railway will build using Docker
 
   # Deploy frontend to GitHub Pages
   deploy-frontend:
@@ -134,13 +129,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download backend artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-dist
-          path: ./server
-
       # Railway deployment using CLI in container
+      # Note: Railway will build the project using Docker
       - name: Deploy to Railway
         run: |
           echo "🚀 Setting up Railway deployment..."
