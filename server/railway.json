@@ -13,12 +13,5 @@
     "restartPolicyMaxRetries": 3,
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 30
-  },
-  "environments": {
-    "production": {
-      "build": {
-        "buildCommand": "bun install --frozen-lockfile && bun run build"
-      }
-    }
   }
 }
