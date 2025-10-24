@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
+import { AboutComponent } from './pages/about/about.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { CartComponent } from './pages/cart/cart.component';
@@ -15,6 +16,7 @@ import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'about', component: AboutComponent },
   { path: 'products', component: ProductsComponent },
   { path: 'product/:id', component: ProductDetailComponent },
   { path: 'cart', component: CartComponent },

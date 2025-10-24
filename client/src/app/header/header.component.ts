@@ -15,7 +15,6 @@ import { CartService } from '../services/cart.service';
         <a routerLink="/">Home</a>
         <a routerLink="/products">Products</a>
         <a routerLink="/about">About</a>
-        <a routerLink="/contact">Contact</a>
       </nav>
       
       @if (authService.isAuthenticated$ | async; as isAuth) {
