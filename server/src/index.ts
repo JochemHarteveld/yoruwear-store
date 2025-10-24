@@ -139,7 +139,6 @@ initializeDatabase().then((dbInitialized) => {
     const server = app.listen({
       port: config.port,
       hostname: '0.0.0.0',
-      reusePort: false  // Disable port reuse for Railway stability
     });
     
     console.log(`🚀 Server started successfully on http://0.0.0.0:${config.port}`);
