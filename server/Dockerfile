@@ -26,6 +26,10 @@ RUN bun install --frozen-lockfile --production --ignore-scripts
 # Copy source code (excluding root files via .dockerignore)
 COPY . .
 
+# Debug: List files to verify src directory exists
+RUN echo "=== Files in /app ===" && ls -la
+RUN echo "=== Files in /app/src ===" && ls -la src/ || echo "src directory not found!"
+
 # Build for production (non-binary for Railway compatibility)
 RUN bun build \
 	--target bun \
