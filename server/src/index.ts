@@ -50,13 +50,22 @@ const app = new Elysia()
     allowedHeaders: ['Content-Type', 'Authorization'],
   }))
   
-  // Health check endpoint for Railway
+  // Health check endpoints for Railway
   .get('/health', () => {
     return { 
       status: 'healthy', 
       timestamp: new Date().toISOString(),
       port: config.port,
       environment: config.environment
+    };
+  })
+  .get('/api/health', () => {
+    return { 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      port: config.port,
+      environment: config.environment,
+      service: 'yoruwear-api'
     };
   })
   
