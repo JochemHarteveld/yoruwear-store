@@ -1,13 +1,8 @@
 [phases.setup]
-nixPkgs = ["bun", "nodejs"]
+nixPkgs = ["bun"]
 
 [phases.install]
 cmds = ["bun install --frozen-lockfile"]
-
-[phases.build]
-cmds = [
-  "bun run build"
-]
 
 [start]
 cmd = "bun src/index.ts"
