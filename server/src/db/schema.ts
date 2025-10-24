@@ -38,6 +38,7 @@ export const products = mysqlTable('products', {
   price: decimal('price', { precision: 10, scale: 2 }).notNull(),
   stock: int('stock').notNull().default(0),
   categoryId: bigint('category_id', { mode: 'bigint', unsigned: true }).references(() => categories.id),
+  imageUrl: varchar('image_url', { length: 500 }),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow(),
 });

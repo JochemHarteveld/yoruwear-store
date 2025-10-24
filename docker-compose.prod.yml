@@ -21,19 +21,17 @@ services:
   server:
     build:
       context: ./server
-      dockerfile: Dockerfile # Now points to development Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
       - DATABASE_URL=mysql://yoruwear_user:yourpassword@mysql:3306/yoruwear
-    volumes:
-      - ./server/src:/app/src # Mount source for hot reload
     depends_on:
       mysql:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
+      # give the server a little more time to boot and respond
       test: [ "CMD", "curl", "-f", "http://127.0.0.1:3000/" ]
       interval: 30s
       timeout: 10s
@@ -43,15 +41,9 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile # Now points to development Dockerfile
+      dockerfile: Dockerfile
     ports:
-      - "4200:4200" # Development port
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - ./client/src:/app/src # Mount source for hot reload
-      - ./client/public:/app/public
-      - /app/node_modules # Anonymous volume to preserve node_modules
+      - "4200:80"
     depends_on:
       server:
         condition: service_healthy

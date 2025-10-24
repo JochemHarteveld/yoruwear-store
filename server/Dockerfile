@@ -1,14 +1,13 @@
-# Railway-optimized Dockerfile for YoruWear Store
-# Single-stage build to avoid Registry transfer issues
+# Development Dockerfile for Elysia server with hot reload
 FROM oven/bun:latest
 
 WORKDIR /app
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV BUN_ENV=production
+# Set environment for development
+ENV NODE_ENV=development
+ENV BUN_ENV=development
 
-# Install system dependencies efficiently
+# Install system dependencies
 RUN apt-get update && \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y \
 	curl \
@@ -16,29 +15,17 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/* && \
 	apt-get clean
 
-# Copy package files for dependency caching
+# Copy package files for dependency installation
 COPY package.json bun.lock* ./
 
-# Install dependencies
-RUN bun install --frozen-lockfile --production
+# Install dependencies with development packages
+RUN bun install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
-# Build for production (non-binary for Railway compatibility)
-RUN bun build \
-	--target bun \
-	--outdir dist \
-	--minify \
-	--sourcemap=none \
-	src/index.ts
-
-# Expose port (Railway will assign via $PORT)
+# Expose the development port
 EXPOSE 3000
 
-# Health check with Railway port support
-HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-	CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
-
-# Use bun runtime for better Railway compatibility  
-CMD ["bun", "run", "dist/index.js"]
+# Start the server with hot reload using bun --watch
+CMD ["bun", "--watch", "src/server.ts"]

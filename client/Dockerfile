@@ -1,24 +1,28 @@
-### Client multi-stage build: build Angular app with Node, serve with nginx
-FROM node:20-alpine AS builder
+# Development Dockerfile for Angular with hot reload
+FROM node:20-alpine
+
 WORKDIR /app
 
-# copy package manifests first for better caching
+# Set environment for development
+ENV NODE_ENV=development
+
+# Install build dependencies for better performance
+RUN apk add --no-cache python3 make g++
+
+# Copy package files for dependency installation
 COPY package.json package-lock.json ./
-COPY . ./
 
-RUN npm ci --no-audit --no-fund
+# Install dependencies with optimizations for development
+# Use npm ci with cache mount for faster builds
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --include=dev --prefer-offline --no-audit --no-fund
 
-# build production assets
-RUN npm run build -- --configuration production || npm run build
+# Copy source code
+COPY . .
 
-FROM nginx:stable-alpine
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-# Angular builds to `dist/<projectName>`; this project is named `client` so copy that folder
-## Angular produces an SSR and a `browser` folder for client assets. Copy browser assets.
-COPY --from=builder /app/dist/client/browser /usr/share/nginx/html
-EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-	CMD wget -qO- --timeout=3 http://localhost/ || exit 1
+# Expose Angular dev server port
+EXPOSE 4200
 
-CMD ["nginx", "-g", "daemon off;"]
+# Start Angular development server with hot reload
+# Bind to all interfaces so it's accessible from outside container
+CMD ["npm", "start", "--", "--host=0.0.0.0", "--poll=2000"]

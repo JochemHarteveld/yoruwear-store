@@ -1,7 +1,8 @@
 import { Elysia } from 'elysia';
 import { cors } from '@elysiajs/cors';
 import { config } from './config';
-import { ensureTablesExist } from './ensure-tables';
+import { runMigrations } from './db/migrate';
+import { resetAndSeedDatabase } from './db/seed';
 
 // Import modules following feature-based structure
 import { auth } from './modules/auth';
@@ -19,11 +20,14 @@ async function initializeDatabase(): Promise<boolean> {
   try {
     console.log('🗄️ Initializing database...');
     
-    const tablesCreated = await ensureTablesExist();
-    if (!tablesCreated) {
-      console.error('❌ Failed to ensure tables exist');
+    const migrationsRan = await runMigrations();
+    if (!migrationsRan) {
+      console.error('❌ Failed to run migrations');
       return false;
     }
+    
+    // Reset and seed the database on startup
+    await resetAndSeedDatabase();
     
     console.log('✅ Database initialization complete!');
     return true;
