@@ -118,25 +118,35 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # Deploy backend to Railway
-  deploy-backend:
-    name: Deploy Backend to Railway
-    needs: backend-build
-    runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  # Deploy backend (placeholder for your chosen platform)
+  # deploy-backend:
+  #   name: Deploy Backend
+  #   needs: backend-build
+  #   runs-on: ubuntu-latest
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
-    env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      SVC_ID: yoruwear-api
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Deploy to Railway (Server)
-        working-directory: ./server
-        run: |
-          echo "🚀 Deploying YoruWear API to Railway..."
-          railway up --service=yoruwear-api
-          echo "✅ Railway deployment completed!"
+  #     # Railway deployment using CLI in container
+  #     # Note: Railway will build the project using Docker
+  #     - name: Deploy to Railway
+  #       run: |
+  #         echo "🚀 Setting up Railway deployment..."
+  #         # Install Railway CLI
+  #         curl -fsSL https://railway.app/install.sh | sh
+  #         export PATH="$PATH:$HOME/.railway/bin"
+          
+  #         # Change to server directory  
+  #         cd server
+          
+  #         echo "🔐 Authenticating with Railway..."
+  #         # Use project token for authentication
+  #         export RAILWAY_TOKEN="${{ secrets.RAILWAY_TOKEN }}"
+          
+  #         echo "🚀 Deploying to Railway..."
+  #         # Deploy to the yoruwear-api service
+  #         railway up --service=yoruwear-api --detach
+          
+  #         echo "✅ Railway deployment initiated!"
